@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/dns_server.dart';
 import '../services/dns_service.dart';
 import '../services/storage_service.dart';
+import 'history_provider.dart';
 
 // ============================================
 // PROVIDERS DE SERVIÇOS
@@ -291,6 +292,9 @@ final hasSeenSetupProvider = StateProvider<bool>((ref) {
 final activateDnsProvider = FutureProvider.family<bool, DnsServer>((ref, server) async {
   final dnsService = ref.read(dnsServiceProvider);
   
+  // Testa latência antes de ativar
+  final latency = await dnsService.testLatency(server.hostname);
+  
   final success = await dnsService.setDns(server.hostname);
   
   if (success) {
@@ -298,6 +302,14 @@ final activateDnsProvider = FutureProvider.family<bool, DnsServer>((ref, server)
     ref.read(selectedServerProvider.notifier).selectServer(server);
     // Força refresh do status
     ref.read(dnsStatusRefreshProvider.notifier).state++;
+    
+    // Registra ativação no histórico
+    ref.read(historyProvider.notifier).recordActivation(
+      serverId: server.id,
+      serverName: server.name,
+      hostname: server.hostname,
+      latencyMs: latency,
+    );
   }
   
   return success;
@@ -312,6 +324,9 @@ final deactivateDnsProvider = FutureProvider<bool>((ref) async {
   if (success) {
     // Força refresh do status
     ref.read(dnsStatusRefreshProvider.notifier).state++;
+    
+    // Registra desativação no histórico
+    ref.read(historyProvider.notifier).recordDeactivation();
   }
   
   return success;

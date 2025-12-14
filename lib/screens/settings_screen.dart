@@ -4,10 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import '../providers/dns_provider.dart';
+import '../providers/notification_provider.dart';
 import '../providers/theme_provider.dart';
 import '../services/backup_service.dart';
 import '../services/permission_service.dart';
 import '../theme/app_theme.dart';
+import 'history_screen.dart';
 
 /// Tela de configurações do aplicativo
 class SettingsScreen extends ConsumerWidget {
@@ -40,6 +42,20 @@ class SettingsScreen extends ConsumerWidget {
           _buildSectionTitle('Servidores DNS', isDarkMode),
           const SizedBox(height: 8),
           _buildServersSection(context, ref, isDarkMode),
+          
+          const SizedBox(height: 24),
+          
+          // Seção de Notificação
+          _buildSectionTitle('Notificação', isDarkMode),
+          const SizedBox(height: 8),
+          _buildNotificationSection(context, ref, isDarkMode),
+          
+          const SizedBox(height: 24),
+          
+          // Seção de Histórico
+          _buildSectionTitle('Histórico', isDarkMode),
+          const SizedBox(height: 8),
+          _buildHistorySection(context, isDarkMode),
           
           const SizedBox(height: 24),
           
@@ -242,6 +258,202 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () {
               HapticFeedback.lightImpact();
               _testLatency(context, ref);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNotificationSection(BuildContext context, WidgetRef ref, bool isDarkMode) {
+    final cardColor = isDarkMode ? const Color(0xFF2D2D2D) : Colors.white;
+    final notificationState = ref.watch(notificationProvider);
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDarkMode ? null : [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Toggle de notificação persistente
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF4CAF50).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.notifications_active_rounded,
+                    color: Color(0xFF4CAF50),
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Notificação persistente',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: isDarkMode ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Mostra status e latência em tempo real',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Switch(
+                  value: notificationState.isEnabled,
+                  onChanged: (value) {
+                    HapticFeedback.lightImpact();
+                    if (value) {
+                      ref.read(notificationProvider.notifier).enableNotification();
+                    } else {
+                      ref.read(notificationProvider.notifier).disableNotification();
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          
+          // Seletor de intervalo (apenas se notificação ativada)
+          if (notificationState.isEnabled) ...[
+            _buildDivider(isDarkMode),
+            _buildIntervalSelector(context, ref, isDarkMode, notificationState),
+          ],
+          
+          // Aviso sobre bateria
+          if (notificationState.isEnabled) ...[
+            _buildDivider(isDarkMode),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.battery_alert_rounded,
+                    color: Colors.orange[400],
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Intervalos menores consomem mais bateria. Recomendamos 60s para uso normal.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.orange[400],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIntervalSelector(BuildContext context, WidgetRef ref, bool isDarkMode, NotificationState state) {
+    final intervals = [
+      (10, '10s', 'Alto consumo'),
+      (30, '30s', 'Moderado'),
+      (60, '60s', 'Recomendado'),
+      (120, '2min', 'Baixo'),
+      (300, '5min', 'Mínimo'),
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Intervalo de atualização',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: isDarkMode ? Colors.white : Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: intervals.map((interval) {
+              final isSelected = state.intervalSeconds == interval.$1;
+              return ChoiceChip(
+                label: Text(interval.$2),
+                selected: isSelected,
+                onSelected: (selected) {
+                  if (selected) {
+                    HapticFeedback.lightImpact();
+                    ref.read(notificationProvider.notifier).setInterval(interval.$1);
+                  }
+                },
+                selectedColor: Theme.of(context).colorScheme.primaryContainer,
+                tooltip: interval.$3,
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistorySection(BuildContext context, bool isDarkMode) {
+    final cardColor = isDarkMode ? const Color(0xFF2D2D2D) : Colors.white;
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDarkMode ? null : [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          _buildSettingsTile(
+            icon: Icons.history_rounded,
+            iconColor: const Color(0xFF2196F3),
+            title: 'Ver histórico de uso',
+            subtitle: 'Estatísticas e registros de ativação',
+            isDarkMode: isDarkMode,
+            isFirst: true,
+            isLast: true,
+            onTap: () {
+              HapticFeedback.lightImpact();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const HistoryScreen()),
+              );
             },
           ),
         ],

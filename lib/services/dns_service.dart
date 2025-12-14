@@ -183,4 +183,121 @@ class DnsService {
     final results = await Future.wait(futures);
     return Map.fromEntries(results);
   }
+
+  // ========== Métodos de Notificação Persistente ==========
+
+  /// Inicia o serviço de notificação persistente
+  /// 
+  /// [hostname] endereço do servidor DNS
+  /// [serverName] nome amigável do servidor
+  /// [intervalSeconds] intervalo de atualização da latência
+  Future<bool> startNotificationService({
+    required String hostname,
+    required String serverName,
+    int intervalSeconds = 60,
+  }) async {
+    try {
+      final result = await _channel.invokeMethod<bool>(
+        'startNotificationService',
+        {
+          'hostname': hostname,
+          'serverName': serverName,
+          'interval': intervalSeconds,
+        },
+      );
+      return result ?? false;
+    } on PlatformException catch (e) {
+      debugPrint('Erro ao iniciar serviço de notificação: ${e.message}');
+      return false;
+    }
+  }
+
+  /// Para o serviço de notificação persistente
+  Future<bool> stopNotificationService() async {
+    try {
+      final result = await _channel.invokeMethod<bool>('stopNotificationService');
+      return result ?? false;
+    } on PlatformException catch (e) {
+      debugPrint('Erro ao parar serviço de notificação: ${e.message}');
+      return false;
+    }
+  }
+
+  /// Verifica se o serviço de notificação está ativo
+  Future<bool> isNotificationActive() async {
+    try {
+      final result = await _channel.invokeMethod<bool>('isNotificationActive');
+      return result ?? false;
+    } on PlatformException catch (e) {
+      debugPrint('Erro ao verificar notificação: ${e.message}');
+      return false;
+    }
+  }
+
+  /// Verifica se notificações estão habilitadas nas preferências
+  Future<bool> isNotificationEnabled() async {
+    try {
+      final result = await _channel.invokeMethod<bool>('isNotificationEnabled');
+      return result ?? false;
+    } on PlatformException catch (e) {
+      debugPrint('Erro ao verificar preferência de notificação: ${e.message}');
+      return false;
+    }
+  }
+
+  /// Define o intervalo de polling da latência
+  Future<bool> setNotificationInterval(int intervalSeconds) async {
+    try {
+      final result = await _channel.invokeMethod<bool>(
+        'setNotificationInterval',
+        {'interval': intervalSeconds},
+      );
+      return result ?? false;
+    } on PlatformException catch (e) {
+      debugPrint('Erro ao definir intervalo: ${e.message}');
+      return false;
+    }
+  }
+
+  /// Obtém o intervalo de polling atual
+  Future<int> getNotificationInterval() async {
+    try {
+      final result = await _channel.invokeMethod<int>('getNotificationInterval');
+      return result ?? 60;
+    } on PlatformException catch (e) {
+      debugPrint('Erro ao obter intervalo: ${e.message}');
+      return 60;
+    }
+  }
+
+  /// Atualiza o hostname exibido na notificação
+  Future<bool> updateNotificationHostname(String hostname) async {
+    try {
+      final result = await _channel.invokeMethod<bool>(
+        'updateNotificationHostname',
+        {'hostname': hostname},
+      );
+      return result ?? false;
+    } on PlatformException catch (e) {
+      debugPrint('Erro ao atualizar hostname na notificação: ${e.message}');
+      return false;
+    }
+  }
+
+  /// Testa latência via código nativo
+  /// 
+  /// Útil quando o teste em Dart não funciona
+  Future<int?> testDnsLatencyNative(String hostname) async {
+    try {
+      final result = await _channel.invokeMethod<int>(
+        'testDnsLatency',
+        {'hostname': hostname},
+      );
+      if (result == null || result < 0) return null;
+      return result;
+    } on PlatformException catch (e) {
+      debugPrint('Erro ao testar latência nativa: ${e.message}');
+      return null;
+    }
+  }
 }

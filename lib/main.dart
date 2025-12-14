@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app.dart';
+import 'services/notification_service.dart';
 
 /// Ponto de entrada do aplicativo DNS Manager
 /// 
@@ -29,6 +30,9 @@ void main() async {
       systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
+
+  // Inicializa o serviço de notificações
+  await NotificationService.initialize();
 
   // Inicia o app com Riverpod
   runApp(

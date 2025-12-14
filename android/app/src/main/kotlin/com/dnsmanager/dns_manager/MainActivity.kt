@@ -1,7 +1,9 @@
 package com.dnsmanager.dns_manager
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -17,6 +19,8 @@ class MainActivity : FlutterActivity() {
         private const val CHANNEL = "com.dnsmanager/dns"
         private const val PREFS_NAME = "dns_manager_prefs"
         private const val KEY_LAST_HOSTNAME = "last_hostname"
+        private const val KEY_NOTIFICATION_ENABLED = "notification_enabled"
+        private const val KEY_NOTIFICATION_INTERVAL = "notification_interval"
     }
     
     private val prefs: SharedPreferences by lazy {
@@ -54,6 +58,10 @@ class MainActivity : FlutterActivity() {
                         prefs.edit().putString(KEY_LAST_HOSTNAME, hostname).apply()
                         // Atualiza widgets
                         DnsWidgetProvider.updateAllWidgets(applicationContext)
+                        // Atualiza notificação se estiver ativa
+                        if (DnsNotificationService.isRunning) {
+                            DnsNotificationService.updateNotification(applicationContext, hostname)
+                        }
                     }
                     result.success(success)
                 }
@@ -64,6 +72,8 @@ class MainActivity : FlutterActivity() {
                     if (success) {
                         // Atualiza widgets
                         DnsWidgetProvider.updateAllWidgets(applicationContext)
+                        // Para a notificação se estiver ativa
+                        stopNotificationService()
                     }
                     result.success(success)
                 }
@@ -85,10 +95,132 @@ class MainActivity : FlutterActivity() {
                     }
                 }
                 
+                // ========== Métodos de Notificação ==========
+                
+                // Inicia serviço de notificação persistente
+                "startNotificationService" -> {
+                    val hostname = call.argument<String>("hostname") ?: prefs.getString(KEY_LAST_HOSTNAME, "dns.google")
+                    val serverName = call.argument<String>("serverName") ?: "DNS Privado"
+                    val interval = call.argument<Int>("interval") ?: 60
+                    
+                    try {
+                        startNotificationService(hostname!!, serverName, interval)
+                        prefs.edit()
+                            .putBoolean(KEY_NOTIFICATION_ENABLED, true)
+                            .putInt(KEY_NOTIFICATION_INTERVAL, interval)
+                            .apply()
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.error("SERVICE_ERROR", "Erro ao iniciar serviço: ${e.message}", null)
+                    }
+                }
+                
+                // Para serviço de notificação
+                "stopNotificationService" -> {
+                    try {
+                        stopNotificationService()
+                        prefs.edit().putBoolean(KEY_NOTIFICATION_ENABLED, false).apply()
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.error("SERVICE_ERROR", "Erro ao parar serviço: ${e.message}", null)
+                    }
+                }
+                
+                // Verifica se notificação está ativa
+                "isNotificationActive" -> {
+                    result.success(DnsNotificationService.isRunning)
+                }
+                
+                // Atualiza intervalo de polling
+                "setNotificationInterval" -> {
+                    val interval = call.argument<Int>("interval")
+                    if (interval == null || interval < 10) {
+                        result.error("INVALID_ARGUMENT", "Intervalo inválido (mínimo 10s)", null)
+                        return@setMethodCallHandler
+                    }
+                    
+                    prefs.edit().putInt(KEY_NOTIFICATION_INTERVAL, interval).apply()
+                    
+                    if (DnsNotificationService.isRunning) {
+                        DnsNotificationService.setPollingInterval(applicationContext, interval)
+                    }
+                    result.success(true)
+                }
+                
+                // Obtém intervalo de polling atual
+                "getNotificationInterval" -> {
+                    val interval = prefs.getInt(KEY_NOTIFICATION_INTERVAL, 60)
+                    result.success(interval)
+                }
+                
+                // Verifica se notificações estão habilitadas nas preferências
+                "isNotificationEnabled" -> {
+                    val enabled = prefs.getBoolean(KEY_NOTIFICATION_ENABLED, false)
+                    result.success(enabled)
+                }
+                
+                // Atualiza hostname na notificação
+                "updateNotificationHostname" -> {
+                    val hostname = call.argument<String>("hostname")
+                    if (hostname.isNullOrBlank()) {
+                        result.error("INVALID_ARGUMENT", "Hostname é obrigatório", null)
+                        return@setMethodCallHandler
+                    }
+                    
+                    if (DnsNotificationService.isRunning) {
+                        DnsNotificationService.updateNotification(applicationContext, hostname)
+                    }
+                    result.success(true)
+                }
+                
+                // Testa latência do DNS
+                "testDnsLatency" -> {
+                    val hostname = call.argument<String>("hostname")
+                    if (hostname.isNullOrBlank()) {
+                        result.error("INVALID_ARGUMENT", "Hostname é obrigatório", null)
+                        return@setMethodCallHandler
+                    }
+                    
+                    Thread {
+                        val latency = DnsNotificationService.testLatency(hostname)
+                        runOnUiThread {
+                            result.success(latency)
+                        }
+                    }.start()
+                }
+                
                 else -> {
                     result.notImplemented()
                 }
             }
         }
+    }
+    
+    /**
+     * Inicia o serviço de notificação persistente
+     */
+    private fun startNotificationService(hostname: String, serverName: String, interval: Int) {
+        val serviceIntent = Intent(applicationContext, DnsNotificationService::class.java).apply {
+            action = DnsNotificationService.ACTION_START
+            putExtra(DnsNotificationService.EXTRA_HOSTNAME, hostname)
+            putExtra(DnsNotificationService.EXTRA_SERVER_NAME, serverName)
+            putExtra(DnsNotificationService.EXTRA_INTERVAL, interval)
+        }
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            applicationContext.startForegroundService(serviceIntent)
+        } else {
+            applicationContext.startService(serviceIntent)
+        }
+    }
+    
+    /**
+     * Para o serviço de notificação
+     */
+    private fun stopNotificationService() {
+        val serviceIntent = Intent(applicationContext, DnsNotificationService::class.java).apply {
+            action = DnsNotificationService.ACTION_STOP
+        }
+        applicationContext.startService(serviceIntent)
     }
 }

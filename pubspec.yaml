@@ -39,6 +39,9 @@ dependencies:
   
   # Gerenciamento de permissões
   permission_handler: ^11.3.0
+  
+  # Notificações locais
+  flutter_local_notifications: ^18.0.0
 
 dev_dependencies:
   flutter_test:
