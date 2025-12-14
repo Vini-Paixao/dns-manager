@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'providers/dns_provider.dart';
+import 'providers/theme_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/setup_screen.dart';
 import 'theme/app_theme.dart';
@@ -8,7 +9,7 @@ import 'theme/app_theme.dart';
 /// Widget raiz do aplicativo DNS Manager
 /// 
 /// Configura:
-/// - Tema Material 3 escuro
+/// - Tema Material 3 com suporte a claro/escuro/sistema
 /// - Rotas de navegação
 /// - Verificação inicial de permissão
 class DnsManagerApp extends ConsumerStatefulWidget {
@@ -33,14 +34,17 @@ class _DnsManagerAppState extends ConsumerState<DnsManagerApp> {
 
   @override
   Widget build(BuildContext context) {
+    // Observa o modo de tema atual
+    final themeMode = ref.watch(flutterThemeModeProvider);
+    
     return MaterialApp(
       title: 'DNS Manager',
       debugShowCheckedModeBanner: false,
       
-      // Tema escuro com Material 3
-      theme: AppTheme.darkTheme,
+      // Temas com suporte a claro/escuro
+      theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
+      themeMode: themeMode,
       
       // Tela inicial com verificação de permissão
       home: const _InitialScreen(),

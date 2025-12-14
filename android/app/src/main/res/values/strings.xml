@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DNS Manager</string>
+    <string name="widget_description">Exibe e controla o status do DNS privado</string>
+    <string name="widget_name">DNS Status</string>
+</resources>

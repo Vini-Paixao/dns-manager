@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:padding="12dp">
+
+    <!-- Ícone DNS -->
+    <ImageView
+        android:id="@+id/widget_icon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_dns_inactive"
+        android:contentDescription="DNS Status Icon" />
+
+    <!-- Informações do DNS -->
+    <LinearLayout
+        android:id="@+id/widget_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="12dp"
+        android:layout_toEndOf="@id/widget_icon"
+        android:layout_toStartOf="@id/widget_toggle_button"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/widget_status_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DNS Inativo"
+            android:textColor="@color/widget_status_inactive"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/widget_server_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Desativado"
+            android:textColor="@color/widget_text_secondary"
+            android:textSize="12sp"
+            android:ellipsize="end"
+            android:maxLines="1" />
+
+    </LinearLayout>
+
+    <!-- Botão Toggle -->
+    <ImageButton
+        android:id="@+id/widget_toggle_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/widget_button_background"
+        android:src="@drawable/ic_power"
+        android:contentDescription="Toggle DNS"
+        android:scaleType="center" />
+
+</RelativeLayout>

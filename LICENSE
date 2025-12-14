@@ -1,21 +1,79 @@
-MIT License
+DNS Manager - Source Available License v1.0
 
-Copyright (c) 2025 DNS Manager
+Copyright (c) 2025 Vinícius Paixão
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+================================================================================
+                              TERMOS E CONDIÇÕES
+================================================================================
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Este software e os arquivos de documentação associados ("Software") estão 
+disponíveis sob os seguintes termos:
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+DIREITOS CONCEDIDOS:
+--------------------
+Você tem permissão para:
+
+1. VISUALIZAÇÃO E ESTUDO
+   - Visualizar, ler e estudar o código fonte para fins educacionais
+   - Aprender técnicas e padrões de programação utilizados
+
+2. USO PESSOAL
+   - Usar o Software para fins pessoais e não comerciais
+   - Instalar e executar o aplicativo em seus dispositivos pessoais
+
+3. CONTRIBUIÇÃO
+   - Criar forks para submeter contribuições ao projeto original
+   - Submeter pull requests, issues e sugestões de melhorias
+
+4. MODIFICAÇÃO LOCAL
+   - Modificar o código para uso pessoal e não comercial
+   - Criar versões personalizadas para seu próprio uso
+
+RESTRIÇÕES:
+-----------
+Você NÃO tem permissão para:
+
+1. USO COMERCIAL
+   - Usar o Software, no todo ou em parte, para fins comerciais
+   - Integrar o Software em produtos ou serviços comerciais
+   - Vender, licenciar ou alugar o Software ou versões derivadas
+   - Usar o Software para gerar receita direta ou indiretamente
+
+2. DISTRIBUIÇÃO
+   - Redistribuir o Software ou versões modificadas
+   - Publicar versões derivadas em lojas de aplicativos
+   - Hospedar cópias públicas do Software compilado
+
+3. REMOÇÃO DE ATRIBUIÇÃO
+   - Remover ou modificar avisos de copyright
+   - Remover créditos ao autor original
+   - Ocultar a origem do código fonte
+
+4. SUBLICENCIAMENTO
+   - Conceder direitos sobre o Software a terceiros
+   - Criar licenças derivadas
+
+LICENCIAMENTO COMERCIAL:
+------------------------
+Para obter uma licença comercial que permita o uso em produtos ou serviços 
+comerciais, entre em contato:
+
+   Email: marcuspaixao0@gmail.com
+   GitHub: https://github.com/Vini-Paixao
+
+ISENÇÃO DE GARANTIA:
+--------------------
+O SOFTWARE É FORNECIDO "COMO ESTÁ", SEM GARANTIA DE QUALQUER TIPO, EXPRESSA 
+OU IMPLÍCITA, INCLUINDO, MAS NÃO SE LIMITANDO ÀS GARANTIAS DE COMERCIALIZAÇÃO,
+ADEQUAÇÃO A UM FIM ESPECÍFICO E NÃO VIOLAÇÃO.
+
+EM NENHUM CASO OS AUTORES OU DETENTORES DOS DIREITOS AUTORAIS SERÃO 
+RESPONSÁVEIS POR QUALQUER REIVINDICAÇÃO, DANO OU OUTRA RESPONSABILIDADE,
+SEJA EM AÇÃO DE CONTRATO, DELITO OU DE OUTRA FORMA, DECORRENTE DE, OU EM
+CONEXÃO COM O SOFTWARE OU O USO OU OUTRAS NEGOCIAÇÕES NO SOFTWARE.
+
+================================================================================
+                         DNS Manager Source Available License
+                                   Versão 1.0
+                              Dezembro de 2025
+================================================================================

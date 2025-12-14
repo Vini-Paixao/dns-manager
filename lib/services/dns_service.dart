@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:flutter/services.dart';
 
 /// Status atual do DNS Privado
@@ -129,5 +131,55 @@ class DnsService {
       print('Erro ao salvar hostname: ${e.message}');
       return false;
     }
+  }
+
+  /// Testa a latência de conexão com um servidor DNS
+  /// 
+  /// [hostname] é o endereço do servidor DNS (ex: dns.google)
+  /// Retorna a latência em milissegundos ou null se não conseguir conectar
+  /// 
+  /// O teste é feito via conexão TCP na porta 853 (DoT - DNS over TLS)
+  Future<int?> testLatency(String hostname) async {
+    const port = 853; // Porta padrão para DNS over TLS
+    const timeout = Duration(seconds: 5);
+    
+    try {
+      final stopwatch = Stopwatch()..start();
+      
+      // Tenta conectar na porta 853 (DoT)
+      final socket = await Socket.connect(
+        hostname,
+        port,
+        timeout: timeout,
+      );
+      
+      stopwatch.stop();
+      await socket.close();
+      
+      return stopwatch.elapsedMilliseconds;
+    } on SocketException {
+      // Servidor não respondeu ou não está disponível
+      return null;
+    } on TimeoutException {
+      // Timeout - servidor muito lento
+      return null;
+    } catch (e) {
+      print('Erro ao testar latência de $hostname: $e');
+      return null;
+    }
+  }
+
+  /// Testa a latência de múltiplos servidores em paralelo
+  /// 
+  /// [hostnames] lista de endereços para testar
+  /// Retorna um Map com hostname -> latência (null se falhou)
+  Future<Map<String, int?>> testMultipleLatencies(List<String> hostnames) async {
+    final futures = hostnames.map((hostname) async {
+      final latency = await testLatency(hostname);
+      return MapEntry(hostname, latency);
+    });
+    
+    final results = await Future.wait(futures);
+    return Map.fromEntries(results);
   }
 }

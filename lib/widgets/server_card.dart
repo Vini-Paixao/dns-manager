@@ -10,11 +10,14 @@ import '../models/dns_server.dart';
 /// - Cor de destaque personalizada
 /// - Estados: normal, selecionado, ativo
 /// - Badge de favorito
+/// - Badge de latência
 /// - Ações de toque e long press
 class ServerCard extends StatelessWidget {
   final DnsServer server;
   final bool isSelected;
   final bool isActive;
+  final int? latency; // Latência em ms (null = não testado)
+  final bool isTestingLatency; // Se está testando latência
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
   final VoidCallback? onFavoriteToggle;
@@ -23,12 +26,15 @@ class ServerCard extends StatelessWidget {
   final bool showHideButton; // Mostrar botão de ocultar (modo reordenação)
   final bool isDragging;
   final bool isCompact; // Modo compacto para reordenação
+  final bool isHorizontal; // Layout horizontal para grid de 1 coluna
 
   const ServerCard({
     super.key,
     required this.server,
     this.isSelected = false,
     this.isActive = false,
+    this.latency,
+    this.isTestingLatency = false,
     this.onTap,
     this.onLongPress,
     this.onFavoriteToggle,
@@ -37,22 +43,31 @@ class ServerCard extends StatelessWidget {
     this.showHideButton = false,
     this.isDragging = false,
     this.isCompact = false,
+    this.isHorizontal = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final serverColor = server.color ?? const Color(0xFF7C4DFF);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
-    // Modo compacto para reordenação (layout horizontal)
+    // Modo compacto para reordenação (layout horizontal com drag handle)
     if (isCompact) {
-      return _buildCompactCard(serverColor);
+      return _buildCompactCard(serverColor, isDarkMode);
     }
     
-    return _buildFullCard(serverColor);
+    // Layout horizontal para grid de 1 coluna
+    if (isHorizontal) {
+      return _buildHorizontalCard(serverColor, isDarkMode);
+    }
+    
+    return _buildFullCard(serverColor, isDarkMode);
   }
 
   /// Card compacto horizontal para modo de reordenação
-  Widget _buildCompactCard(Color serverColor) {
+  Widget _buildCompactCard(Color serverColor, bool isDarkMode) {
+    final bgColor = isDarkMode ? const Color(0xFF2D2D2D) : Colors.white;
+    
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
@@ -60,8 +75,8 @@ class ServerCard extends StatelessWidget {
         color: isDragging 
             ? serverColor.withOpacity(0.3)
             : isActive 
-                ? serverColor.withOpacity(0.15) 
-                : const Color(0xFF2D2D2D),
+                ? serverColor.withOpacity(isDarkMode ? 0.15 : 0.1) 
+                : bgColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isActive 
@@ -77,7 +92,13 @@ class ServerCard extends StatelessWidget {
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
-        ] : null,
+        ] : (isDarkMode ? null : [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ]),
       ),
       child: Material(
         color: Colors.transparent,
@@ -185,8 +206,12 @@ class ServerCard extends StatelessWidget {
     );
   }
 
-  /// Card completo vertical (modo normal)
-  Widget _buildFullCard(Color serverColor) {
+  /// Card horizontal elegante para grid de 1 coluna (poucos servidores)
+  Widget _buildHorizontalCard(Color serverColor, bool isDarkMode) {
+    final bgColor = isDarkMode ? const Color(0xFF2D2D2D) : Colors.white;
+    final textColor = isDarkMode ? Colors.white : Colors.black87;
+    final subtitleColor = isDarkMode ? Colors.grey[500] : Colors.grey[600];
+    
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
@@ -194,8 +219,162 @@ class ServerCard extends StatelessWidget {
         color: isDragging 
             ? serverColor.withOpacity(0.3)
             : isActive 
-                ? serverColor.withOpacity(0.15) 
-                : const Color(0xFF2D2D2D),
+                ? serverColor.withOpacity(isDarkMode ? 0.15 : 0.1) 
+                : bgColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isActive 
+              ? serverColor 
+              : isSelected 
+                  ? const Color(0xFF00BFA5) 
+                  : Colors.transparent,
+          width: isActive || isSelected ? 2 : 1,
+        ),
+        boxShadow: isDarkMode ? null : [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          onLongPress: onLongPress,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                // Logo do servidor
+                _buildLogo(serverColor, size: 48),
+                const SizedBox(width: 16),
+                
+                // Nome e hostname
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              server.name,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: textColor,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (server.isFavorite && showFavoriteButton)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 6),
+                              child: Icon(
+                                Icons.star_rounded,
+                                color: Colors.amber,
+                                size: 18,
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        server.hostname,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: subtitleColor,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // Badges e botões
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Badge de latência
+                    if (latency != null || isTestingLatency)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: _buildLatencyBadge(serverColor),
+                      ),
+                    
+                    // Badge de ativo
+                    if (isActive)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: serverColor,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Text(
+                          'ATIVO',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    
+                    // Botão favorito
+                    if (showFavoriteButton && onFavoriteToggle != null && !isActive)
+                      IconButton(
+                        onPressed: onFavoriteToggle,
+                        icon: Icon(
+                          server.isFavorite 
+                              ? Icons.star_rounded 
+                              : Icons.star_outline_rounded,
+                          color: server.isFavorite 
+                              ? Colors.amber 
+                              : (isDarkMode ? Colors.grey[600] : Colors.grey[400]),
+                          size: 24,
+                        ),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(
+                          minWidth: 36,
+                          minHeight: 36,
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Card completo vertical (modo normal)
+  Widget _buildFullCard(Color serverColor, bool isDarkMode) {
+    final bgColor = isDarkMode ? const Color(0xFF2D2D2D) : Colors.white;
+    final textColor = isDarkMode ? Colors.white : Colors.black87;
+    final subtitleColor = isDarkMode ? Colors.grey[500] : Colors.grey[600];
+    final tagBgColor = isDarkMode ? Colors.grey[800] : Colors.grey[200];
+    final tagTextColor = isDarkMode ? Colors.grey[400] : Colors.grey[600];
+    
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+      decoration: BoxDecoration(
+        color: isDragging 
+            ? serverColor.withOpacity(0.3)
+            : isActive 
+                ? serverColor.withOpacity(isDarkMode ? 0.15 : 0.1) 
+                : bgColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isActive 
@@ -211,7 +390,13 @@ class ServerCard extends StatelessWidget {
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
-        ] : null,
+        ] : (isDarkMode ? null : [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ]),
       ),
       child: Material(
         color: Colors.transparent,
@@ -266,7 +451,7 @@ class ServerCard extends StatelessWidget {
                                   : Icons.star_outline_rounded,
                               color: server.isFavorite 
                                   ? Colors.amber 
-                                  : Colors.grey[600],
+                                  : (isDarkMode ? Colors.grey[600] : Colors.grey[400]),
                               size: 20,
                             ),
                             padding: EdgeInsets.zero,
@@ -285,10 +470,10 @@ class ServerCard extends StatelessWidget {
                 // Nome do servidor
                 Text(
                   server.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: textColor,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -301,34 +486,44 @@ class ServerCard extends StatelessWidget {
                   server.hostname,
                   style: TextStyle(
                     fontSize: 11,
-                    color: Colors.grey[500],
+                    color: subtitleColor,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 
-                // Badge de servidor customizado
-                if (server.isCustom) ...[
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[800],
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      'PERSONALIZADO',
-                      style: TextStyle(
-                        fontSize: 8,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[400],
+                const SizedBox(height: 8),
+                
+                // Badges inferiores (latência + customizado)
+                Row(
+                  children: [
+                    // Badge de latência
+                    _buildLatencyBadge(serverColor),
+                    
+                    // Badge de servidor customizado
+                    if (server.isCustom) ...[
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: tagBgColor,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'PERSONALIZADO',
+                          style: TextStyle(
+                            fontSize: 8,
+                            fontWeight: FontWeight.w500,
+                            color: tagTextColor,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ],
+                    ],
+                  ],
+                ),
               ],
             ),
           ),
@@ -418,6 +613,85 @@ class ServerCard extends StatelessWidget {
       Icons.dns_rounded,
       color: color,
       size: size > 35 ? 24 : 18,
+    );
+  }
+
+  /// Constrói o badge de latência
+  Widget _buildLatencyBadge(Color serverColor) {
+    // Ainda testando
+    if (isTestingLatency) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        decoration: BoxDecoration(
+          color: Colors.grey[800],
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 8,
+              height: 8,
+              child: CircularProgressIndicator(
+                strokeWidth: 1.5,
+                color: Colors.grey[400],
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '...',
+              style: TextStyle(
+                fontSize: 9,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[400],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Não testado ainda
+    if (latency == null) {
+      return const SizedBox.shrink();
+    }
+
+    // Define cor baseada na latência
+    final Color latencyColor;
+    
+    if (latency! < 50) {
+      latencyColor = Colors.green;
+    } else if (latency! < 150) {
+      latencyColor = Colors.orange;
+    } else {
+      latencyColor = Colors.red;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: latencyColor.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.speed_rounded,
+            size: 10,
+            color: latencyColor,
+          ),
+          const SizedBox(width: 3),
+          Text(
+            '${latency}ms',
+            style: TextStyle(
+              fontSize: 9,
+              fontWeight: FontWeight.bold,
+              color: latencyColor,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

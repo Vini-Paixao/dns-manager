@@ -301,3 +301,57 @@ final deactivateDnsProvider = FutureProvider<bool>((ref) async {
   
   return success;
 });
+
+// ============================================
+// LATÊNCIA DOS SERVIDORES
+// ============================================
+
+/// Notifier para gerenciar dados de latência dos servidores
+class LatencyNotifier extends StateNotifier<Map<String, int?>> {
+  final DnsService _dnsService;
+  bool _isLoading = false;
+
+  LatencyNotifier(this._dnsService) : super({});
+
+  bool get isLoading => _isLoading;
+
+  /// Testa a latência de um servidor específico
+  Future<int?> testServer(String hostname) async {
+    _isLoading = true;
+    final latency = await _dnsService.testLatency(hostname);
+    state = {...state, hostname: latency};
+    _isLoading = false;
+    return latency;
+  }
+
+  /// Testa a latência de todos os servidores da lista
+  Future<void> testAllServers(List<String> hostnames) async {
+    _isLoading = true;
+    
+    // Testa em paralelo
+    final results = await _dnsService.testMultipleLatencies(hostnames);
+    state = {...state, ...results};
+    
+    _isLoading = false;
+  }
+
+  /// Limpa os dados de latência
+  void clearLatencies() {
+    state = {};
+  }
+
+  /// Obtém a latência de um servidor (ou null se não testado)
+  int? getLatency(String hostname) => state[hostname];
+}
+
+/// Provider para dados de latência
+final latencyProvider = StateNotifierProvider<LatencyNotifier, Map<String, int?>>((ref) {
+  final dnsService = ref.read(dnsServiceProvider);
+  return LatencyNotifier(dnsService);
+});
+
+/// Provider para verificar se está carregando latências
+final isTestingLatencyProvider = Provider<bool>((ref) {
+  final notifier = ref.watch(latencyProvider.notifier);
+  return notifier.isLoading;
+});

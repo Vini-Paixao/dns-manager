@@ -52,6 +52,8 @@ class MainActivity : FlutterActivity() {
                     if (success) {
                         // Salva o hostname como último usado
                         prefs.edit().putString(KEY_LAST_HOSTNAME, hostname).apply()
+                        // Atualiza widgets
+                        DnsWidgetProvider.updateAllWidgets(applicationContext)
                     }
                     result.success(success)
                 }
@@ -59,6 +61,10 @@ class MainActivity : FlutterActivity() {
                 // Desativa DNS privado
                 "disableDns" -> {
                     val success = DnsHelper.disablePrivateDns(applicationContext)
+                    if (success) {
+                        // Atualiza widgets
+                        DnsWidgetProvider.updateAllWidgets(applicationContext)
+                    }
                     result.success(success)
                 }
                 

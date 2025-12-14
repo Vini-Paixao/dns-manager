@@ -9,6 +9,7 @@ import '../providers/dns_provider.dart';
 import '../services/dns_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/server_card.dart';
+import 'settings_screen.dart';
 
 /// Tela principal do aplicativo DNS Manager
 /// 
@@ -27,6 +28,30 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool _isToggling = false;
   bool _isReorderMode = false;
+  bool _isTestingLatency = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Testa latências ao iniciar (com delay para não bloquear UI)
+    Future.delayed(const Duration(milliseconds: 500), _testAllLatencies);
+  }
+
+  /// Testa a latência de todos os servidores
+  Future<void> _testAllLatencies() async {
+    if (_isTestingLatency) return;
+    
+    setState(() => _isTestingLatency = true);
+    
+    final servers = ref.read(serversProvider);
+    final hostnames = servers.map((s) => s.hostname).toList();
+    
+    await ref.read(latencyProvider.notifier).testAllServers(hostnames);
+    
+    if (mounted) {
+      setState(() => _isTestingLatency = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +63,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final allServers = ref.watch(serversProvider);
     final hiddenCount = allServers.where((s) => s.isHidden).length;
     final selectedServer = ref.watch(selectedServerProvider);
+    final latencies = ref.watch(latencyProvider);
+    
+    // Cores adaptadas ao tema
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDarkMode ? const Color(0xFF2D2D2D) : Colors.white;
 
     return Scaffold(
       body: SafeArea(
@@ -54,15 +84,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildHeader(),
+                      _buildHeader(cardColor),
                       const SizedBox(height: 24),
                       dnsStatusAsync.when(
-                        data: (status) => _buildStatusCard(status, selectedServer),
-                        loading: () => _buildStatusCardLoading(),
-                        error: (e, _) => _buildStatusCardError(e.toString()),
+                        data: (status) => _buildStatusCard(status, selectedServer, cardColor, isDarkMode),
+                        loading: () => _buildStatusCardLoading(cardColor, isDarkMode),
+                        error: (e, _) => _buildStatusCardError(e.toString(), cardColor, isDarkMode),
                       ),
                       const SizedBox(height: 28),
-                      _buildServersHeader(servers.length, hiddenCount),
+                      _buildServersHeader(servers.length, hiddenCount, cardColor, isDarkMode),
                       const SizedBox(height: 16),
                     ],
                   ),
@@ -70,7 +100,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
 
               // Lista de servidores com drag-and-drop
-              _buildServerGrid(servers, selectedServer, dnsStatusAsync),
+              _buildServerGrid(servers, selectedServer, dnsStatusAsync, latencies),
 
               // Espaço final
               const SliverToBoxAdapter(
@@ -91,7 +121,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(Color cardColor) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -113,6 +143,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         Row(
           children: [
+            // Botão de testar latência
+            IconButton(
+              onPressed: _isTestingLatency ? null : _testAllLatencies,
+              icon: _isTestingLatency
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.grey[400],
+                      ),
+                    )
+                  : const Icon(Icons.speed_rounded),
+              tooltip: 'Testar latência',
+              style: IconButton.styleFrom(
+                backgroundColor: cardColor,
+              ),
+            ),
+            const SizedBox(width: 8),
             // Botão de reordenar
             IconButton(
               onPressed: () {
@@ -129,7 +178,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               style: IconButton.styleFrom(
                 backgroundColor: _isReorderMode 
                     ? const Color(0xFF00BFA5).withOpacity(0.2)
-                    : const Color(0xFF2D2D2D),
+                    : cardColor,
               ),
             ),
             const SizedBox(width: 8),
@@ -138,7 +187,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               onPressed: _showSettings,
               icon: const Icon(Icons.settings_outlined),
               style: IconButton.styleFrom(
-                backgroundColor: const Color(0xFF2D2D2D),
+                backgroundColor: cardColor,
               ),
             ),
           ],
@@ -147,14 +196,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildStatusCard(DnsStatus status, DnsServer? selectedServer) {
+  Widget _buildStatusCard(DnsStatus status, DnsServer? selectedServer, Color cardColor, bool isDarkMode) {
     final isEnabled = status.enabled;
+    final textColor = isDarkMode ? Colors.white : (isEnabled ? Colors.white : Colors.black87);
     
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: isEnabled ? AppTheme.primaryGradient : null,
-        color: isEnabled ? null : const Color(0xFF2D2D2D),
+        color: isEnabled ? null : cardColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: isEnabled
             ? [
@@ -164,7 +214,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   offset: const Offset(0, 10),
                 ),
               ]
-            : null,
+            : (isDarkMode ? null : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ]),
       ),
       child: Column(
         children: [
@@ -178,16 +234,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     'DNS Privado',
                     style: TextStyle(
                       fontSize: 14,
-                      color: isEnabled ? Colors.white70 : Colors.grey[500],
+                      color: isEnabled ? Colors.white70 : (isDarkMode ? Colors.grey[500] : Colors.grey[600]),
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     isEnabled ? 'Ativo' : 'Desativado',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: textColor,
                     ),
                   ),
                 ],
@@ -201,8 +257,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onChanged: _isToggling ? null : (value) => _toggleDns(value, selectedServer),
                   activeColor: Colors.white,
                   activeTrackColor: Colors.white24,
-                  inactiveThumbColor: Colors.grey[400],
-                  inactiveTrackColor: Colors.grey[700],
+                  inactiveThumbColor: isDarkMode ? Colors.grey[400] : Colors.grey[500],
+                  inactiveTrackColor: isDarkMode ? Colors.grey[700] : Colors.grey[300],
                 ),
               ),
             ],
@@ -258,13 +314,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildStatusCardLoading() {
+  Widget _buildStatusCardLoading(Color cardColor, bool isDarkMode) {
     return Container(
       height: 140,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFF2D2D2D),
+        color: cardColor,
         borderRadius: BorderRadius.circular(24),
+        boxShadow: isDarkMode ? null : [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: const Center(
         child: CircularProgressIndicator(color: Color(0xFF7C4DFF)),
@@ -272,13 +335,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildStatusCardError(String error) {
+  Widget _buildStatusCardError(String error, Color cardColor, bool isDarkMode) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFF2D2D2D),
+        color: cardColor,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.red.withOpacity(0.5)),
+        boxShadow: isDarkMode ? null : [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -299,7 +369,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildServersHeader(int count, int hiddenCount) {
+  Widget _buildServersHeader(int count, int hiddenCount, Color cardColor, bool isDarkMode) {
+    final textColor = isDarkMode ? Colors.white : Colors.black87;
+    
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -309,12 +381,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             children: [
               Row(
                 children: [
-                  const Text(
+                  Text(
                     'Servidores DNS',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: textColor,
                     ),
                   ),
                   if (hiddenCount > 0 && !_isReorderMode) ...[
@@ -380,6 +452,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     List<DnsServer> servers,
     DnsServer? selectedServer,
     AsyncValue<DnsStatus> dnsStatusAsync,
+    Map<String, int?> latencies,
   ) {
     final currentHostname = dnsStatusAsync.valueOrNull?.hostname;
     final isEnabled = dnsStatusAsync.valueOrNull?.enabled ?? false;
@@ -407,6 +480,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     server: server,
                     isSelected: isSelected,
                     isActive: isActive,
+                    latency: latencies[server.hostname],
+                    isTestingLatency: _isTestingLatency,
                     showFavoriteButton: false,
                     showHideButton: true, // Mostrar botão de ocultar
                     isDragging: false,
@@ -460,8 +535,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               server: server,
               isSelected: isSelected,
               isActive: isActive,
-              // Usa modo compacto horizontal quando é layout de 1 coluna
-              isCompact: crossAxisCount == 1,
+              latency: latencies[server.hostname],
+              isTestingLatency: _isTestingLatency,
+              // Usa layout horizontal elegante quando é grid de 1 coluna
+              isHorizontal: crossAxisCount == 1,
               onTap: () => _selectServer(server),
               onLongPress: () => _showServerOptions(server),
               onFavoriteToggle: () => _toggleFavorite(server),
@@ -552,6 +629,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _showSnackBar(message, isSuccess: true);
   }
 
+  void _toggleHidden(DnsServer server) {
+    HapticFeedback.lightImpact();
+    ref.read(serversProvider.notifier).toggleHidden(server.id);
+    
+    final message = server.isHidden 
+        ? '${server.name} agora está visível'
+        : '${server.name} foi ocultado';
+    _showSnackBar(message, isSuccess: true);
+  }
+
   void _showServerOptions(DnsServer server) {
     HapticFeedback.mediumImpact();
     
@@ -603,6 +690,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onTap: () {
                   Navigator.pop(context);
                   _toggleFavorite(server);
+                },
+              ),
+              
+              const SizedBox(height: 8),
+              _buildOptionTile(
+                icon: server.isHidden ? Icons.visibility_rounded : Icons.visibility_off_rounded,
+                label: server.isHidden ? 'Mostrar servidor' : 'Ocultar servidor',
+                color: server.isHidden ? Colors.green : Colors.orange,
+                onTap: () {
+                  Navigator.pop(context);
+                  _toggleHidden(server);
                 },
               ),
               
@@ -1246,84 +1344,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _showSettings() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF1E1E1E),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[700],
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Configurações',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 24),
-              
-              _buildOptionTile(
-                icon: Icons.refresh_rounded,
-                label: 'Restaurar servidores padrão',
-                color: const Color(0xFF7C4DFF),
-                onTap: () async {
-                  Navigator.pop(context);
-                  await ref.read(serversProvider.notifier).resetToDefaults();
-                  _showSnackBar('Servidores restaurados', isSuccess: true);
-                },
-              ),
-              const SizedBox(height: 8),
-              _buildOptionTile(
-                icon: Icons.info_outline_rounded,
-                label: 'Sobre o app',
-                color: Colors.blue,
-                onTap: () {
-                  Navigator.pop(context);
-                  _showAboutDialog();
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showAboutDialog() {
-    showAboutDialog(
-      context: context,
-      applicationName: 'DNS Manager',
-      applicationVersion: '1.0.0',
-      applicationIcon: Container(
-        width: 60,
-        height: 60,
-        decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: const Icon(Icons.dns_rounded, color: Colors.white, size: 32),
-      ),
-      children: [
-        const Text(
-          'Gerencie seu DNS privado (DNS over TLS) de forma simples e rápida.',
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'Requer permissão WRITE_SECURE_SETTINGS via ADB.',
-          style: TextStyle(color: Colors.grey[500], fontSize: 12),
-        ),
-      ],
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SettingsScreen()),
     );
   }
 
