@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import '../providers/dns_provider.dart';
 import '../providers/theme_provider.dart';
 import '../services/backup_service.dart';
+import '../services/permission_service.dart';
 import '../theme/app_theme.dart';
 
 /// Tela de configurações do aplicativo
@@ -795,6 +796,26 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Future<void> _importFromFile(BuildContext context, WidgetRef ref, bool isDarkMode) async {
+    // Solicita permissão antes de acessar arquivos (necessário em Android < 13)
+    final hasPermission = await PermissionService.requestStoragePermission(context);
+    
+    if (!hasPermission && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.error_outline, color: Colors.orange),
+              SizedBox(width: 12),
+              Text('Permissão de armazenamento necessária'),
+            ],
+          ),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+      return;
+    }
+    
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,

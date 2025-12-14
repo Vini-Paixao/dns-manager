@@ -36,6 +36,9 @@ dependencies:
   
   # Compartilhar arquivos
   share_plus: ^10.0.0
+  
+  # Gerenciamento de permissões
+  permission_handler: ^11.3.0
 
 dev_dependencies:
   flutter_test:

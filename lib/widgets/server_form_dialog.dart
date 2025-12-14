@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import '../models/dns_server.dart';
+import '../services/permission_service.dart';
 import '../theme/app_colors.dart';
 
 /// Dialog unificado para adicionar ou editar servidor DNS
@@ -85,6 +86,28 @@ class _ServerFormDialogState extends State<ServerFormDialog> {
   }
 
   Future<void> _pickImage() async {
+    // Solicita permissão antes de abrir a galeria
+    final hasPermission = await PermissionService.requestPhotosPermission(context);
+    
+    if (!hasPermission) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.error_outline, color: Colors.orange),
+                SizedBox(width: 12),
+                Text('Permissão de fotos necessária'),
+              ],
+            ),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+      return;
+    }
+    
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
       source: ImageSource.gallery,

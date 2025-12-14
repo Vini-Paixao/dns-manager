@@ -4,6 +4,13 @@
     <!-- Permissão de internet para validação de DNS -->
     <uses-permission android:name="android.permission.INTERNET"/>
     
+    <!-- Permissões de armazenamento para importar/exportar backup -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29"/>
+    
+    <!-- Permissões de mídia para selecionar logo personalizado (Android 13+) -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    
     <application
         android:label="DNS Manager"
         android:name="${applicationName}"
