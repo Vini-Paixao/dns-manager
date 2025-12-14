@@ -1,0 +1,99 @@
+name: dns_manager
+description: "Gerenciador de DNS Privado (DNS over TLS) para Android"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Gerenciamento de estado com Riverpod
+  flutter_riverpod: ^2.4.9
+  
+  # Persistência de dados
+  shared_preferences: ^2.2.2
+  
+  # Fontes do Google (Outfit)
+  google_fonts: ^6.1.0
+  
+  # Ícones Material
+  cupertino_icons: ^1.0.8
+  http: ^1.6.0
+  flutter_svg: ^2.2.0
+  
+  # Seletor de imagem para logos personalizados
+  image_picker: ^1.0.7
+  
+  # Gerenciamento de arquivos
+  path_provider: ^2.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^5.0.0
+  
+  # Gerador de ícones do app
+  flutter_launcher_icons: ^0.14.3
+
+# Configuração do ícone do app
+flutter_launcher_icons:
+  android: true
+  ios: false
+  # Coloque sua imagem 1024x1024 em assets/icon/app_icon.png
+  image_path: "assets/icon/app_icon.png"
+  # Configuração para Adaptive Icon (Android 8+)
+  adaptive_icon_background: "#1A1A2E"  # Cor de fundo escura que combina com o app
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+  # Remove o canal alfa para compatibilidade
+  remove_alpha_ios: true
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # Assets do app (logos dos servidores DNS)
+  assets:
+    - assets/logos/
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/to/resolution-aware-images
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/to/asset-from-package
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/to/font-from-package
