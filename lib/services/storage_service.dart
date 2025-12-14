@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/dns_server.dart';
 
@@ -29,7 +30,7 @@ class StorageService {
       final jsonString = jsonEncode(jsonList);
       return await _prefs.setString(_keyServers, jsonString);
     } catch (e) {
-      print('Erro ao salvar servidores: $e');
+      debugPrint('Erro ao salvar servidores: $e');
       return false;
     }
   }
@@ -47,7 +48,7 @@ class StorageService {
           .map((json) => DnsServer.fromJson(json as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      print('Erro ao carregar servidores: $e');
+      debugPrint('Erro ao carregar servidores: $e');
       return [];
     }
   }

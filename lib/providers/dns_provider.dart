@@ -192,6 +192,21 @@ class ServersNotifier extends StateNotifier<List<DnsServer>> {
     state = defaultServers;
     await _storageService.saveServers(state);
   }
+
+  /// Importa servidores de um backup
+  /// 
+  /// Substitui completamente a lista atual de servidores
+  Future<bool> importServers(List<DnsServer> servers) async {
+    if (servers.isEmpty) return false;
+    
+    // Reordena os servidores importados
+    final imported = servers.asMap().entries.map((e) {
+      return e.value.copyWith(order: e.key);
+    }).toList();
+    
+    state = _sortServers(imported);
+    return await _storageService.saveServers(state);
+  }
 }
 
 /// Provider da lista de servidores (todos)

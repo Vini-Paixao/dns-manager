@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 /// Status atual do DNS Privado
@@ -46,7 +47,7 @@ class DnsService {
       final result = await _channel.invokeMethod<bool>('hasPermission');
       return result ?? false;
     } on PlatformException catch (e) {
-      print('Erro ao verificar permissão: ${e.message}');
+      debugPrint('Erro ao verificar permissão: ${e.message}');
       return false;
     }
   }
@@ -65,7 +66,7 @@ class DnsService {
       }
       return DnsStatus(enabled: false, mode: 'off');
     } on PlatformException catch (e) {
-      print('Erro ao obter status DNS: ${e.message}');
+      debugPrint('Erro ao obter status DNS: ${e.message}');
       return DnsStatus(enabled: false, mode: 'off');
     }
   }
@@ -86,7 +87,7 @@ class DnsService {
       );
       return result ?? false;
     } on PlatformException catch (e) {
-      print('Erro ao configurar DNS: ${e.message}');
+      debugPrint('Erro ao configurar DNS: ${e.message}');
       return false;
     }
   }
@@ -99,7 +100,7 @@ class DnsService {
       final result = await _channel.invokeMethod<bool>('disableDns');
       return result ?? false;
     } on PlatformException catch (e) {
-      print('Erro ao desativar DNS: ${e.message}');
+      debugPrint('Erro ao desativar DNS: ${e.message}');
       return false;
     }
   }
@@ -112,7 +113,7 @@ class DnsService {
       final result = await _channel.invokeMethod<String>('getLastHostname');
       return result ?? 'dns.google';
     } on PlatformException catch (e) {
-      print('Erro ao obter último hostname: ${e.message}');
+      debugPrint('Erro ao obter último hostname: ${e.message}');
       return 'dns.google';
     }
   }
@@ -128,7 +129,7 @@ class DnsService {
       );
       return result ?? false;
     } on PlatformException catch (e) {
-      print('Erro ao salvar hostname: ${e.message}');
+      debugPrint('Erro ao salvar hostname: ${e.message}');
       return false;
     }
   }
@@ -164,7 +165,7 @@ class DnsService {
       // Timeout - servidor muito lento
       return null;
     } catch (e) {
-      print('Erro ao testar latência de $hostname: $e');
+      debugPrint('Erro ao testar latência de $hostname: $e');
       return null;
     }
   }

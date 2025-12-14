@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'app_colors.dart';
 
 /// Modo de tema do aplicativo
 enum ThemeModeOption {
@@ -15,41 +16,34 @@ enum ThemeModeOption {
 /// - Esquema de cores deep purple/teal
 /// - Fonte Outfit do Google Fonts
 class AppTheme {
-  // Cores principais (compartilhadas entre temas)
-  static const Color _primaryColor = Color(0xFF7C4DFF); // Deep Purple
-  static const Color _secondaryColor = Color(0xFF00BFA5); // Teal
-  static const Color _errorColor = Color(0xFFCF6679);
+  // Cores principais (usando AppColors centralizado)
+  static const Color _primaryColor = AppColors.primary;
+  static const Color _secondaryColor = AppColors.secondary;
+  static const Color _errorColor = AppColors.error;
   
-  // Cores do tema escuro
-  static const Color _darkBackgroundColor = Color(0xFF121212);
-  static const Color _darkSurfaceColor = Color(0xFF1E1E1E);
-  static const Color _darkCardColor = Color(0xFF2D2D2D);
-  static const Color _darkTextPrimary = Color(0xFFFFFFFF);
-  static const Color _darkTextSecondary = Color(0xFFB3B3B3);
+  // Cores do tema escuro (usando AppColors)
+  static const Color _darkBackgroundColor = AppColors.darkBackground;
+  static const Color _darkSurfaceColor = AppColors.darkSurface;
+  static const Color _darkCardColor = AppColors.darkCard;
+  static const Color _darkTextPrimary = AppColors.darkTextPrimary;
+  static const Color _darkTextSecondary = AppColors.darkTextSecondary;
   
-  // Cores do tema claro
-  static const Color _lightBackgroundColor = Color(0xFFF5F5F5);
-  static const Color _lightSurfaceColor = Color(0xFFFFFFFF);
-  static const Color _lightCardColor = Color(0xFFFFFFFF);
-  static const Color _lightTextPrimary = Color(0xFF1A1A1A);
-  static const Color _lightTextSecondary = Color(0xFF666666);
+  // Cores do tema claro (usando AppColors)
+  static const Color _lightBackgroundColor = AppColors.lightBackground;
+  static const Color _lightSurfaceColor = AppColors.lightSurface;
+  static const Color _lightCardColor = AppColors.lightCard;
+  static const Color _lightTextPrimary = AppColors.lightTextPrimary;
+  static const Color _lightTextSecondary = AppColors.lightTextSecondary;
 
-  // Compatibilidade: manter variáveis antigas
+  // Compatibilidade: manter variáveis antigas apontando para tema escuro
   static const Color _backgroundColor = _darkBackgroundColor;
   static const Color _surfaceColor = _darkSurfaceColor;
   static const Color _cardColor = _darkCardColor;
   static const Color _textPrimary = _darkTextPrimary;
   static const Color _textSecondary = _darkTextSecondary;
   
-  // Gradientes
-  static const LinearGradient primaryGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [
-      Color(0xFF7C4DFF),
-      Color(0xFF00BFA5),
-    ],
-  );
+  // Gradientes (usando AppColors)
+  static const LinearGradient primaryGradient = AppColors.primaryGradient;
 
   /// Tema escuro principal do app
   static ThemeData get darkTheme {

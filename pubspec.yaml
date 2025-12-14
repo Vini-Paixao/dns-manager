@@ -30,6 +30,12 @@ dependencies:
   
   # Gerenciamento de arquivos
   path_provider: ^2.1.2
+  
+  # Seletor de arquivos para importar backup
+  file_picker: ^8.0.0
+  
+  # Compartilhar arquivos
+  share_plus: ^10.0.0
 
 dev_dependencies:
   flutter_test:

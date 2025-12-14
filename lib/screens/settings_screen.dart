@@ -1,8 +1,11 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 import '../providers/dns_provider.dart';
 import '../providers/theme_provider.dart';
+import '../services/backup_service.dart';
 import '../theme/app_theme.dart';
 
 /// Tela de configurações do aplicativo
@@ -271,7 +274,7 @@ class SettingsScreen extends ConsumerWidget {
             isFirst: true,
             onTap: () {
               HapticFeedback.lightImpact();
-              _showComingSoon(context, 'Exportar configurações');
+              _showExportDialog(context, ref, isDarkMode);
             },
           ),
           _buildDivider(isDarkMode),
@@ -284,7 +287,7 @@ class SettingsScreen extends ConsumerWidget {
             isLast: true,
             onTap: () {
               HapticFeedback.lightImpact();
-              _showComingSoon(context, 'Importar configurações');
+              _showImportDialog(context, ref, isDarkMode);
             },
           ),
         ],
@@ -507,16 +510,452 @@ class SettingsScreen extends ConsumerWidget {
     }
   }
 
-  void _showComingSoon(BuildContext context, String feature) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$feature: em breve!'),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+  void _showExportDialog(BuildContext context, WidgetRef ref, bool isDarkMode) {
+    final servers = ref.read(serversProvider);
+    final selectedId = ref.read(selectedServerProvider)?.id;
+    final themeMode = ref.read(themeModeProvider).name;
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.blue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.upload_rounded, color: Colors.blue, size: 24),
+            ),
+            const SizedBox(width: 12),
+            const Text('Exportar Backup'),
+          ],
         ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'O backup incluirá:',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: isDarkMode ? Colors.white : Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 12),
+            _buildBackupInfoRow(Icons.dns_rounded, '${servers.length} servidores DNS', isDarkMode),
+            _buildBackupInfoRow(Icons.palette_rounded, 'Tema: $themeMode', isDarkMode),
+            if (selectedId != null)
+              _buildBackupInfoRow(Icons.check_circle_rounded, 'Servidor selecionado', isDarkMode),
+            const SizedBox(height: 16),
+            Text(
+              'Escolha como exportar:',
+              style: TextStyle(
+                fontSize: 12,
+                color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          OutlinedButton.icon(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _exportToClipboard(context, servers, selectedId, themeMode);
+            },
+            icon: const Icon(Icons.copy_rounded, size: 18),
+            label: const Text('Copiar'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _exportAndShare(context, servers, selectedId, themeMode);
+            },
+            icon: const Icon(Icons.share_rounded, size: 18),
+            label: const Text('Compartilhar'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  Widget _buildBackupInfoRow(IconData icon, String text, bool isDarkMode) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: isDarkMode ? Colors.grey[400] : Colors.grey[600]),
+          const SizedBox(width: 8),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 14,
+              color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _exportToClipboard(
+    BuildContext context,
+    List servers,
+    String? selectedId,
+    String themeMode,
+  ) async {
+    final backupService = BackupService();
+    final jsonString = backupService.generateBackupString(
+      servers: servers.cast(),
+      selectedServerId: selectedId,
+      themeMode: themeMode,
+    );
+    
+    await Clipboard.setData(ClipboardData(text: jsonString));
+    
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.green),
+              SizedBox(width: 12),
+              Text('Backup copiado para a área de transferência'),
+            ],
+          ),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    }
+  }
+
+  Future<void> _exportAndShare(
+    BuildContext context,
+    List servers,
+    String? selectedId,
+    String themeMode,
+  ) async {
+    final backupService = BackupService();
+    final result = await backupService.exportToFile(
+      servers: servers.cast(),
+      selectedServerId: selectedId,
+      themeMode: themeMode,
+    );
+    
+    if (result.success && result.filePath != null) {
+      await Share.shareXFiles(
+        [XFile(result.filePath!)],
+        subject: 'DNS Manager Backup',
+        text: 'Backup das configurações do DNS Manager',
+      );
+    } else if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error, color: Colors.red),
+              const SizedBox(width: 12),
+              Expanded(child: Text(result.message)),
+            ],
+          ),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    }
+  }
+
+  void _showImportDialog(BuildContext context, WidgetRef ref, bool isDarkMode) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.download_rounded, color: Colors.green, size: 24),
+            ),
+            const SizedBox(width: 12),
+            const Text('Importar Backup'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Escolha a origem do backup:',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: isDarkMode ? Colors.white : Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '⚠️ Atenção: A importação substituirá todas as suas configurações atuais.',
+              style: TextStyle(
+                fontSize: 12,
+                color: isDarkMode ? Colors.orange[300] : Colors.orange[700],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          OutlinedButton.icon(
+            onPressed: () {
+              Navigator.pop(context);
+              _importFromClipboard(context, ref, isDarkMode);
+            },
+            icon: const Icon(Icons.paste_rounded, size: 18),
+            label: const Text('Da Área de Transferência'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.pop(context);
+              _importFromFile(context, ref, isDarkMode);
+            },
+            icon: const Icon(Icons.folder_open_rounded, size: 18),
+            label: const Text('De Arquivo'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _importFromClipboard(BuildContext context, WidgetRef ref, bool isDarkMode) async {
+    final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+    
+    if (clipboardData?.text == null || clipboardData!.text!.isEmpty) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.error, color: Colors.red),
+                SizedBox(width: 12),
+                Text('Área de transferência vazia'),
+              ],
+            ),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+      return;
+    }
+
+    final backupService = BackupService();
+    final result = await backupService.importFromString(clipboardData.text!);
+    
+    if (result.success && result.data != null) {
+      if (context.mounted) {
+        _confirmImport(context, ref, result.data!, isDarkMode);
+      }
+    } else if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error, color: Colors.red),
+              const SizedBox(width: 12),
+              Expanded(child: Text(result.message)),
+            ],
+          ),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    }
+  }
+
+  Future<void> _importFromFile(BuildContext context, WidgetRef ref, bool isDarkMode) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+      );
+      
+      if (result == null || result.files.isEmpty) return;
+      
+      final filePath = result.files.first.path;
+      if (filePath == null) return;
+
+      final backupService = BackupService();
+      final importResult = await backupService.importFromFile(filePath);
+      
+      if (importResult.success && importResult.data != null) {
+        if (context.mounted) {
+          _confirmImport(context, ref, importResult.data!, isDarkMode);
+        }
+      } else if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error, color: Colors.red),
+                const SizedBox(width: 12),
+                Expanded(child: Text(importResult.message)),
+              ],
+            ),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error, color: Colors.red),
+                const SizedBox(width: 12),
+                Expanded(child: Text('Erro ao selecionar arquivo: $e')),
+              ],
+            ),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+    }
+  }
+
+  void _confirmImport(BuildContext context, WidgetRef ref, BackupData backup, bool isDarkMode) {
+    final customServers = backup.servers.where((s) => s.isCustom).length;
+    final defaultServers = backup.servers.length - customServers;
+    
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text('Confirmar Importação'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Backup de ${backup.createdAt.day}/${backup.createdAt.month}/${backup.createdAt.year}',
+              style: TextStyle(
+                fontSize: 12,
+                color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildBackupInfoRow(Icons.dns_rounded, '$defaultServers servidores padrão', isDarkMode),
+            _buildBackupInfoRow(Icons.add_circle_rounded, '$customServers servidores customizados', isDarkMode),
+            if (backup.themeMode != null)
+              _buildBackupInfoRow(Icons.palette_rounded, 'Tema: ${backup.themeMode}', isDarkMode),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.orange.withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.warning_rounded, color: Colors.orange[700], size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Suas configurações atuais serão substituídas',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.orange[700],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              await _applyImport(context, ref, backup);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Importar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _applyImport(BuildContext context, WidgetRef ref, BackupData backup) async {
+    // Importar servidores
+    await ref.read(serversProvider.notifier).importServers(backup.servers);
+    
+    // Importar tema se existir
+    if (backup.themeMode != null) {
+      final themeOption = ThemeModeOption.values.firstWhere(
+        (e) => e.name == backup.themeMode,
+        orElse: () => ThemeModeOption.system,
+      );
+      ref.read(themeModeProvider.notifier).setThemeMode(themeOption);
+    }
+    
+    // Importar servidor selecionado se existir
+    if (backup.selectedServerId != null) {
+      final server = backup.servers.where((s) => s.id == backup.selectedServerId).firstOrNull;
+      if (server != null) {
+        await ref.read(selectedServerProvider.notifier).selectServer(server);
+      }
+    }
+    
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.green),
+              const SizedBox(width: 12),
+              Text('Backup importado! ${backup.servers.length} servidores restaurados'),
+            ],
+          ),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    }
   }
 
   void _showAboutDialog(BuildContext context) {
