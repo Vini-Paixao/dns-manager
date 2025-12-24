@@ -69,7 +69,38 @@ class ServersNotifier extends StateNotifier<List<DnsServer>> {
       state = defaultServers;
       _storageService.saveServers(state);
     } else {
-      state = _sortServers(saved);
+      // Remove servidores padrão que foram removidos do app (ex: OpenDNS)
+      final defaultIds = DefaultDnsServers.servers.map((s) => s.id).toSet();
+      final filtered = saved.where((server) {
+        // Mantém servidores customizados e servidores padrão que ainda existem
+        return server.isCustom || defaultIds.contains(server.id);
+      }).toList();
+      
+      // Mescla informações atualizadas dos servidores padrão
+      // (description, websiteUrl, benefits podem ter sido adicionados)
+      final merged = filtered.map((server) {
+        if (!server.isCustom) {
+          final defaultServer = DefaultDnsServers.getById(server.id);
+          if (defaultServer != null) {
+            // Mantém preferências do usuário (favorito, ordem, oculto)
+            // mas atualiza informações do servidor padrão
+            return defaultServer.copyWith(
+              isFavorite: server.isFavorite,
+              isHidden: server.isHidden,
+              order: server.order,
+              createdAt: server.createdAt,
+            );
+          }
+        }
+        return server;
+      }).toList();
+      
+      // Atualiza storage se houve mudanças
+      if (filtered.length != saved.length || merged != filtered) {
+        _storageService.saveServers(merged);
+      }
+      
+      state = _sortServers(merged);
     }
   }
 

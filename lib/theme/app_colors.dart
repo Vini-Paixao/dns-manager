@@ -4,19 +4,29 @@ import 'package:flutter/material.dart';
 /// 
 /// Use estas constantes em vez de valores hexadecimais hardcoded
 /// para manter consistência visual em todo o app.
+/// 
+/// Cores do gradiente do logo:
+/// - Ciano claro: #5de0e6
+/// - Azul escuro: #004aad
 class AppColors {
   // Prevenir instanciação
   AppColors._();
 
   // ============================================
-  // CORES PRIMÁRIAS E DE DESTAQUE
+  // CORES PRIMÁRIAS E DE DESTAQUE (baseadas no logo)
   // ============================================
   
-  /// Cor primária do app (Deep Purple)
-  static const Color primary = Color(0xFF7C4DFF);
+  /// Cor primária do app (Azul escuro do logo)
+  static const Color primary = Color(0xFF004aad);
   
-  /// Cor secundária/destaque (Teal)
-  static const Color secondary = Color(0xFF00BFA5);
+  /// Cor secundária/destaque (Ciano claro do logo)
+  static const Color secondary = Color(0xFF5de0e6);
+  
+  /// Variante da cor primária (mais claro para tema claro)
+  static const Color primaryLight = Color(0xFF3366BB);
+  
+  /// Variante do secundário (mais escuro para contraste)
+  static const Color secondaryDark = Color(0xFF00B4B4);
   
   /// Cor de erro
   static const Color error = Color(0xFFCF6679);
@@ -75,8 +85,8 @@ class AppColors {
   // CORES DE STATUS DO DNS
   // ============================================
   
-  /// DNS ativo (verde)
-  static const Color dnsActive = Color(0xFF00BFA5);
+  /// DNS ativo (ciano do logo)
+  static const Color dnsActive = Color(0xFF5de0e6);
   
   /// DNS inativo (cinza)
   static const Color dnsInactive = Color(0xFF9E9E9E);
@@ -97,32 +107,39 @@ class AppColors {
   /// AdGuard
   static const Color providerAdguard = Color(0xFF68BC71);
   
-  /// NextDNS
-  static const Color providerNextdns = Color(0xFF007BFF);
-  
-  /// OpenDNS
-  static const Color providerOpendns = Color(0xFFFF6600);
-  
-  /// Servidor customizado (cor padrão)
-  static const Color providerCustom = Color(0xFF7C4DFF);
+  /// Servidor customizado (cor padrão - azul do logo)
+  static const Color providerCustom = Color(0xFF004aad);
 
   // ============================================
   // GRADIENTES
   // ============================================
   
-  /// Gradiente primário do app
+  /// Gradiente primário do app (circular do logo)
   static const LinearGradient primaryGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [primary, secondary],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Color(0xFF5de0e6), // Ciano claro
+      Color(0xFF004aad), // Azul escuro
+    ],
   );
   
-  /// Gradiente para o ícone do app
+  /// Gradiente do ícone do app (igual ao logo)
   static const LinearGradient iconGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xFF5de0e6), // Cyan claro
+      Color(0xFF5de0e6), // Ciano claro
+      Color(0xFF004aad), // Azul escuro
+    ],
+  );
+  
+  /// Gradiente radial para fundos especiais
+  static const RadialGradient radialGradient = RadialGradient(
+    center: Alignment.center,
+    radius: 0.8,
+    colors: [
+      Color(0xFF5de0e6), // Ciano claro
       Color(0xFF004aad), // Azul escuro
     ],
   );
@@ -166,8 +183,6 @@ class AppColors {
     if (name.contains('google')) return providerGoogle;
     if (name.contains('quad9')) return providerQuad9;
     if (name.contains('adguard')) return providerAdguard;
-    if (name.contains('nextdns')) return providerNextdns;
-    if (name.contains('opendns')) return providerOpendns;
     return providerCustom;
   }
   

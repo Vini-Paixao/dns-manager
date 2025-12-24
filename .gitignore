@@ -52,3 +52,4 @@ android/app/upload-keystore.jks
 
 # GitHub workflows (opcional)
 .github/
+playstore/

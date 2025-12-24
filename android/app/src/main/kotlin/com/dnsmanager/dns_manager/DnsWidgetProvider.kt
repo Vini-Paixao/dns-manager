@@ -146,8 +146,6 @@ class DnsWidgetProvider : AppWidgetProvider() {
             hostname.contains("google") -> "Google"
             hostname.contains("quad9") -> "Quad9"
             hostname.contains("adguard") -> "AdGuard"
-            hostname.contains("nextdns") -> "NextDNS"
-            hostname.contains("opendns") -> "OpenDNS"
             else -> hostname.take(20)
         }
     }

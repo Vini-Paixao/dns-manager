@@ -170,8 +170,6 @@ void main() {
       expect(hostnames, contains('dns.google'));
       expect(hostnames, contains('dns.quad9.net'));
       expect(hostnames, contains('dns.adguard.com'));
-      expect(hostnames, contains('dns.nextdns.io'));
-      expect(hostnames, contains('doh.opendns.com'));
     });
 
     test('default servers should not be custom', () {

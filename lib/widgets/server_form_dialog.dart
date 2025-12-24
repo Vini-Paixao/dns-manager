@@ -59,8 +59,8 @@ class _ServerFormDialogState extends State<ServerFormDialog> {
   bool get isEditing => widget.server != null;
 
   static const _availableColors = [
-    0xFF7C4DFF, // Purple
-    0xFF00BFA5, // Teal
+    0xFF004aad, // Azul escuro (primária)
+    0xFF5de0e6, // Ciano (secundária)
     0xFFF38020, // Orange
     0xFF4285F4, // Blue
     0xFF68BC71, // Green

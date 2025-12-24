@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../models/dns_server.dart';
+import '../theme/app_colors.dart';
 
 /// Card reutilizável para exibir um servidor DNS
 /// 
@@ -22,8 +23,10 @@ class ServerCard extends StatelessWidget {
   final VoidCallback? onLongPress;
   final VoidCallback? onFavoriteToggle;
   final VoidCallback? onHideToggle; // Callback para ocultar/mostrar servidor
+  final VoidCallback? onInfoTap; // Callback para abrir informações
   final bool showFavoriteButton;
   final bool showHideButton; // Mostrar botão de ocultar (modo reordenação)
+  final bool showInfoButton; // Mostrar botão de info (apenas servidores padrão)
   final bool isDragging;
   final bool isCompact; // Modo compacto para reordenação
   final bool isHorizontal; // Layout horizontal para grid de 1 coluna
@@ -39,8 +42,10 @@ class ServerCard extends StatelessWidget {
     this.onLongPress,
     this.onFavoriteToggle,
     this.onHideToggle,
+    this.onInfoTap,
     this.showFavoriteButton = true,
     this.showHideButton = false,
+    this.showInfoButton = true,
     this.isDragging = false,
     this.isCompact = false,
     this.isHorizontal = false,
@@ -48,7 +53,7 @@ class ServerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final serverColor = server.color ?? const Color(0xFF7C4DFF);
+    final serverColor = server.color ?? AppColors.primary;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     
     // Modo compacto para reordenação (layout horizontal com drag handle)
@@ -63,6 +68,12 @@ class ServerCard extends StatelessWidget {
     
     return _buildFullCard(serverColor, isDarkMode);
   }
+
+  /// Verifica se o servidor tem informações para exibir
+  bool get _hasInfo => 
+      server.description != null || 
+      server.websiteUrl != null || 
+      (server.benefits != null && server.benefits!.isNotEmpty);
 
   /// Card compacto horizontal para modo de reordenação
   Widget _buildCompactCard(Color serverColor, bool isDarkMode) {
@@ -82,7 +93,7 @@ class ServerCard extends StatelessWidget {
           color: isActive 
               ? serverColor 
               : isSelected 
-                  ? const Color(0xFF00BFA5) 
+                  ? AppColors.secondary 
                   : Colors.transparent,
           width: isActive || isSelected ? 2 : 1,
         ),
@@ -226,7 +237,7 @@ class ServerCard extends StatelessWidget {
           color: isActive 
               ? serverColor 
               : isSelected 
-                  ? const Color(0xFF00BFA5) 
+                  ? AppColors.secondary 
                   : Colors.transparent,
           width: isActive || isSelected ? 2 : 1,
         ),
@@ -329,23 +340,35 @@ class ServerCard extends StatelessWidget {
                         ),
                       ),
                     
+                    // Botão de informações (apenas para servidores com info)
+                    if (showInfoButton && _hasInfo && onInfoTap != null)
+                      GestureDetector(
+                        onTap: onInfoTap,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Icon(
+                            Icons.help_outline_rounded,
+                            color: isDarkMode ? Colors.grey[500] : Colors.grey[400],
+                            size: 22,
+                          ),
+                        ),
+                      ),
+                    
                     // Botão favorito
                     if (showFavoriteButton && onFavoriteToggle != null && !isActive)
-                      IconButton(
-                        onPressed: onFavoriteToggle,
-                        icon: Icon(
-                          server.isFavorite 
-                              ? Icons.star_rounded 
-                              : Icons.star_outline_rounded,
-                          color: server.isFavorite 
-                              ? Colors.amber 
-                              : (isDarkMode ? Colors.grey[600] : Colors.grey[400]),
-                          size: 24,
-                        ),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(
-                          minWidth: 36,
-                          minHeight: 36,
+                      GestureDetector(
+                        onTap: onFavoriteToggle,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: Icon(
+                            server.isFavorite 
+                                ? Icons.star_rounded 
+                                : Icons.star_outline_rounded,
+                            color: server.isFavorite 
+                                ? Colors.amber 
+                                : (isDarkMode ? Colors.grey[600] : Colors.grey[400]),
+                            size: 22,
+                          ),
                         ),
                       ),
                   ],
@@ -380,7 +403,7 @@ class ServerCard extends StatelessWidget {
           color: isActive 
               ? serverColor 
               : isSelected 
-                  ? const Color(0xFF00BFA5) 
+                  ? AppColors.secondary 
                   : Colors.transparent,
           width: isActive || isSelected ? 2 : 1,
         ),
@@ -409,55 +432,67 @@ class ServerCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Linha superior: Logo + Favorito
+                // Linha superior: Logo + Info + Favorito (+ Ativo se for custom)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Logo do servidor
                     _buildLogo(serverColor),
                     
-                    // Badges e ações
+                    // Ações (info, favorito, e ativo para custom)
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Badge de ativo
-                        if (isActive)
+                        // Badge de ativo (em cima apenas para servidores customizados)
+                        if (isActive && server.isCustom)
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
+                              horizontal: 6,
+                              vertical: 3,
                             ),
                             decoration: BoxDecoration(
                               color: serverColor,
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(6),
                             ),
                             child: const Text(
                               'ATIVO',
                               style: TextStyle(
-                                fontSize: 10,
+                                fontSize: 9,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                             ),
                           ),
                         
+                        // Botão de informações (apenas para servidores com info)
+                        if (showInfoButton && _hasInfo && onInfoTap != null)
+                          GestureDetector(
+                            onTap: onInfoTap,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 6),
+                              child: Icon(
+                                Icons.help_outline_rounded,
+                                color: isDarkMode ? Colors.grey[500] : Colors.grey[400],
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                        
                         // Botão favorito
                         if (showFavoriteButton && onFavoriteToggle != null)
-                          IconButton(
-                            onPressed: onFavoriteToggle,
-                            icon: Icon(
-                              server.isFavorite 
-                                  ? Icons.star_rounded 
-                                  : Icons.star_outline_rounded,
-                              color: server.isFavorite 
-                                  ? Colors.amber 
-                                  : (isDarkMode ? Colors.grey[600] : Colors.grey[400]),
-                              size: 20,
-                            ),
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(
-                              minWidth: 32,
-                              minHeight: 32,
+                          GestureDetector(
+                            onTap: onFavoriteToggle,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 6),
+                              child: Icon(
+                                server.isFavorite 
+                                    ? Icons.star_rounded 
+                                    : Icons.star_outline_rounded,
+                                color: server.isFavorite 
+                                    ? Colors.amber 
+                                    : (isDarkMode ? Colors.grey[600] : Colors.grey[400]),
+                                size: 18,
+                              ),
                             ),
                           ),
                       ],
@@ -494,7 +529,7 @@ class ServerCard extends StatelessWidget {
                 
                 const SizedBox(height: 8),
                 
-                // Badges inferiores (latência + customizado)
+                // Badges inferiores (latência + ativo/customizado)
                 Row(
                   children: [
                     // Badge de latência
@@ -522,6 +557,29 @@ class ServerCard extends StatelessWidget {
                         ),
                       ),
                     ],
+                    
+                    const Spacer(),
+                    
+                    // Badge de ativo (canto inferior direito, apenas para servidores padrão)
+                    if (isActive && !server.isCustom)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: serverColor,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text(
+                          'ATIVO',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ],
@@ -726,12 +784,12 @@ class AddServerCard extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF7C4DFF).withOpacity(0.1),
+                  color: AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
                   Icons.add_rounded,
-                  color: Color(0xFF7C4DFF),
+                  color: AppColors.primary,
                   size: 28,
                 ),
               ),

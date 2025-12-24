@@ -28,6 +28,7 @@ class DnsNotificationService : Service() {
         const val KEY_INTERVAL = "latency_interval"
         const val KEY_SERVER_NAME = "server_name"
         const val KEY_HOSTNAME = "hostname"
+        const val KEY_CONNECTION_START_TIME = "connection_start_time"
         
         const val ACTION_START = "com.dnsmanager.START_NOTIFICATION"
         const val ACTION_STOP = "com.dnsmanager.STOP_NOTIFICATION"
@@ -129,6 +130,7 @@ class DnsNotificationService : Service() {
     private var currentHostname = ""
     private var currentLatency: Int? = null
     private var intervalSeconds = DEFAULT_INTERVAL
+    private var connectionStartTime: Long = 0L
     
     private val prefs: SharedPreferences by lazy {
         getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -137,6 +139,12 @@ class DnsNotificationService : Service() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
+        
+        // Recupera dados salvos (para caso de reinício do serviço)
+        currentServerName = prefs.getString(KEY_SERVER_NAME, "DNS") ?: "DNS"
+        currentHostname = prefs.getString(KEY_HOSTNAME, "") ?: ""
+        intervalSeconds = prefs.getInt(KEY_INTERVAL, DEFAULT_INTERVAL)
+        connectionStartTime = prefs.getLong(KEY_CONNECTION_START_TIME, System.currentTimeMillis())
     }
     
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -145,6 +153,7 @@ class DnsNotificationService : Service() {
                 currentServerName = intent.getStringExtra(EXTRA_SERVER_NAME) ?: "DNS"
                 currentHostname = intent.getStringExtra(EXTRA_HOSTNAME) ?: ""
                 intervalSeconds = intent.getIntExtra(EXTRA_INTERVAL, DEFAULT_INTERVAL)
+                connectionStartTime = System.currentTimeMillis()
                 
                 // Salva configurações
                 prefs.edit().apply {
@@ -152,6 +161,7 @@ class DnsNotificationService : Service() {
                     putString(KEY_SERVER_NAME, currentServerName)
                     putString(KEY_HOSTNAME, currentHostname)
                     putInt(KEY_INTERVAL, intervalSeconds)
+                    putLong(KEY_CONNECTION_START_TIME, connectionStartTime)
                     apply()
                 }
                 
@@ -172,13 +182,24 @@ class DnsNotificationService : Service() {
                 val newServerName = intent.getStringExtra(EXTRA_SERVER_NAME)
                 val newHostname = intent.getStringExtra(EXTRA_HOSTNAME)
                 
+                // Se trocou de servidor, reinicia o contador de tempo
+                val serverChanged = newServerName != null && newServerName != currentServerName
+                
                 if (newServerName != null) currentServerName = newServerName
                 if (newHostname != null) currentHostname = newHostname
+                
+                // Se trocou de servidor, reinicia o tempo de conexão
+                if (serverChanged) {
+                    connectionStartTime = System.currentTimeMillis()
+                }
                 
                 // Atualiza configurações
                 prefs.edit().apply {
                     putString(KEY_SERVER_NAME, currentServerName)
                     putString(KEY_HOSTNAME, currentHostname)
+                    if (serverChanged) {
+                        putLong(KEY_CONNECTION_START_TIME, connectionStartTime)
+                    }
                     apply()
                 }
                 
@@ -260,8 +281,11 @@ class DnsNotificationService : Service() {
             else -> "${currentLatency}ms"
         }
         
+        // Calcula tempo de conexão
+        val connectionDuration = formatDuration(System.currentTimeMillis() - connectionStartTime)
+        
         val contentText = if (currentHostname.isNotEmpty()) {
-            "$currentHostname • $latencyText"
+            "$latencyText • $connectionDuration"
         } else {
             latencyText
         }
@@ -270,6 +294,7 @@ class DnsNotificationService : Service() {
             .setSmallIcon(R.drawable.ic_dns_tile)
             .setContentTitle("🛡️ $currentServerName ativo")
             .setContentText(contentText)
+            .setSubText(currentHostname)
             .setOngoing(true)
             .setShowWhen(false)
             .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -281,6 +306,24 @@ class DnsNotificationService : Service() {
                 disablePendingIntent
             )
             .build()
+    }
+    
+    /**
+     * Formata duração em formato legível (ex: "2h 15min" ou "45min" ou "30s")
+     */
+    private fun formatDuration(durationMs: Long): String {
+        val totalSeconds = durationMs / 1000
+        val days = totalSeconds / 86400
+        val hours = (totalSeconds % 86400) / 3600
+        val minutes = (totalSeconds % 3600) / 60
+        val seconds = totalSeconds % 60
+        
+        return when {
+            days > 0 -> "${days}d ${hours}h"
+            hours > 0 -> "${hours}h ${minutes}min"
+            minutes > 0 -> "${minutes}min"
+            else -> "${seconds}s"
+        }
     }
     
     private fun updateNotificationContent() {

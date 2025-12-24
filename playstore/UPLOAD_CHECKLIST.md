@@ -13,9 +13,9 @@
 - [x] **Formato:** PNG 32-bit
 
 ### Screenshots (obrigatório - mínimo 2)
-- [ ] Capturar screenshots do app
-- [ ] Salvar em `playstore/screenshots/`
-- [ ] Resolução: 1080 x 1920 px (ou 1920 x 1080 para paisagem)
+- [x] Capturar screenshots do app
+- [x] Salvar em `playstore/screenshots/`
+- [x] Resolução: 1080 x 1920 px (ou 1920 x 1080 para paisagem)
 
 ### Feature Graphic (recomendado)
 - [ ] Criar banner 1024 x 500 px
@@ -32,20 +32,20 @@
 - [x] **Categoria:** Ferramentas
 
 ### Gráficos
-- [ ] Ícone 512x512
+- [x] Ícone 512x512
 - [ ] Feature Graphic 1024x500
-- [ ] Screenshots (2-8)
+- [x] Screenshots (2-8)
 
 ---
 
 ## 3. Classificação de Conteúdo
 
 Preencher questionário no Google Play Console:
-- [ ] Violência: Nenhuma
-- [ ] Conteúdo sexual: Nenhum
-- [ ] Linguagem: Inofensiva
-- [ ] Drogas: Nenhuma referência
-- [ ] IARC: Classificação esperada "Livre"
+- [x] Violência: Nenhuma
+- [x] Conteúdo sexual: Nenhum
+- [x] Linguagem: Inofensiva
+- [x] Drogas: Nenhuma referência
+- [x] IARC: Classificação esperada "Livre"
 
 ---
 
@@ -53,18 +53,18 @@ Preencher questionário no Google Play Console:
 
 ### Preço e Distribuição
 - [x] **Preço:** Gratuito
-- [ ] **Países:** Selecionar todos (ou específicos)
-- [ ] **Contém anúncios:** Não
+- [x] **Países:** Todos selecionados
+- [x] **Contém anúncios:** Não
 
 ### Política de Privacidade
 - [x] **Arquivo:** PRIVACY_POLICY.md
-- [ ] **URL publicada:** Publicar no GitHub ou site
+- [x] **URL publicada:** https://raw.githubusercontent.com/Vini-Paixao/dns-manager/main/PRIVACY_POLICY.md
 
 ### Declaração de Dados (Data Safety)
-- [ ] Coleta de dados: Não
-- [ ] Compartilhamento de dados: Não
-- [ ] Dados criptografados: N/A
-- [ ] Exclusão de dados: N/A
+- [x] Coleta de dados: Não
+- [x] Compartilhamento de dados: Não
+- [x] Dados criptografados: N/A
+- [x] Exclusão de dados: N/A
 
 ---
 
@@ -129,23 +129,37 @@ não realiza nenhuma coleta de dados.
 
 ## 7. Release Notes (Notas da Versão)
 
-### Versão 1.0.0 (Inicial)
+### Versão 1.0.2 (Atual)
 ```
-🎉 Lançamento inicial do DNS Manager!
+🎬 Novidades nesta versão:
 
-Recursos:
+• Links agora abrem diretamente no navegador/app
+• Tutoriais em vídeo do YouTube para configuração
+• Instruções melhoradas para cada método de permissão
+• Melhorias de usabilidade na tela de configuração
+• Correções de bugs menores
+```
+
+### Versão 1.0.1
+```
+🚀 Lançamento oficial do DNS Manager!
+
+✨ Recursos principais:
 • Configure DNS Privado (DNS over TLS) facilmente
 • Quick Settings Tile para acesso rápido
-• Widget na tela inicial
-• Notificação persistente com latência
+• Widget na tela inicial com status em tempo real
+• Notificação persistente com latência e tempo de conexão
 • 6 servidores DNS pré-configurados
-• Adicione servidores personalizados
+• Adicione servidores personalizados com logo e cores
 • Backup e restauração de configurações
-• Histórico de uso com estatísticas
+• Histórico de uso com estatísticas detalhadas
 • Interface moderna com Material Design 3
+• Temas claro e escuro
 
-Servidores incluídos:
-• Cloudflare • Google • Quad9 • AdGuard • NextDNS • OpenDNS
+🛡️ Servidores incluídos:
+Cloudflare • Google • Quad9 • AdGuard • NextDNS • OpenDNS
+
+🆓 Gratuito e sem anúncios!
 ```
 
 ---
@@ -168,3 +182,4 @@ Servidores incluídos:
 - [ ] Responder reviews
 - [ ] Monitorar crash reports no Console
 - [ ] Planejar próximas atualizações
+- [ ] Criar Release no GitHub com APK

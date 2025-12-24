@@ -24,10 +24,16 @@ class UsageRecord {
     this.failureReason,
   });
 
-  /// Duração de uso do servidor
+  /// Duração de uso do servidor (null se ainda ativo)
   Duration? get duration {
     if (deactivatedAt == null) return null;
     return deactivatedAt!.difference(activatedAt);
+  }
+  
+  /// Duração de uso incluindo tempo atual (para registros ativos)
+  Duration get currentDuration {
+    final endTime = deactivatedAt ?? DateTime.now();
+    return endTime.difference(activatedAt);
   }
 
   /// Verifica se ainda está ativo (sem data de desativação)
@@ -177,8 +183,8 @@ class UsageStatistics {
       serverUsageCount[record.serverName] = 
           (serverUsageCount[record.serverName] ?? 0) + 1;
       
-      // Tempo de uso
-      final duration = record.duration ?? Duration.zero;
+      // Tempo de uso (usa currentDuration para incluir tempo de registros ativos)
+      final duration = record.currentDuration;
       totalUsageTime += duration;
       usageTimeByServer[record.serverId] = 
           (usageTimeByServer[record.serverId] ?? Duration.zero) + duration;

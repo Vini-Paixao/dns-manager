@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'providers/dns_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/setup_screen.dart';
 import 'theme/app_theme.dart';
+import 'theme/app_colors.dart';
+import 'widgets/app_logo.dart';
 
 /// Widget raiz do aplicativo DNS Manager
 /// 
@@ -45,6 +48,18 @@ class _DnsManagerAppState extends ConsumerState<DnsManagerApp> {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
+      
+      // Localização em português
+      locale: const Locale('pt', 'BR'),
+      supportedLocales: const [
+        Locale('pt', 'BR'),
+        Locale('en', 'US'),
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       
       // Tela inicial com verificação de permissão
       home: const _InitialScreen(),
@@ -101,27 +116,8 @@ class _SplashScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Ícone com gradiente
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                gradient: AppTheme.primaryGradient,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF7C4DFF).withOpacity(0.4),
-                    blurRadius: 30,
-                    offset: const Offset(0, 15),
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.dns_rounded,
-                size: 50,
-                color: Colors.white,
-              ),
-            ),
+            // Logo do app
+            const AppLogo.large(),
             
             const SizedBox(height: 32),
             
@@ -137,7 +133,7 @@ class _SplashScreen extends StatelessWidget {
             const SizedBox(height: 48),
             
             const CircularProgressIndicator(
-              color: Color(0xFF7C4DFF),
+              color: AppColors.primary,
               strokeWidth: 3,
             ),
           ],

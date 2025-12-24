@@ -36,7 +36,7 @@ class BackupData {
   factory BackupData.fromJson(Map<String, dynamic> json) {
     return BackupData(
       version: json['version'] as int? ?? 1,
-      appVersion: json['appVersion'] as String? ?? '1.0.0',
+      appVersion: json['appVersion'] as String? ?? '1',
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
           : DateTime.now(),
@@ -73,7 +73,7 @@ class BackupResult {
 /// - Validar dados de backup
 class BackupService {
   static const int currentVersion = 1;
-  static const String appVersion = '1.0.0';
+  static const String appVersion = '1.0.1';
   static const String backupFileName = 'dns_manager_backup';
 
   /// Exporta as configurações para um arquivo JSON

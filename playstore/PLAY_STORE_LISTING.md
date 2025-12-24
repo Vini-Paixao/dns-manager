@@ -4,7 +4,7 @@
 
 **Nome do App:** DNS Manager  
 **Package:** com.dnsmanager.dns_manager  
-**Versão:** 1.0.0 (versionCode: 1)  
+**Versão:** 1.0.2 (versionCode: 2)  
 **Categoria:** Ferramentas  
 **Classificação do Conteúdo:** Livre para todos  
 
@@ -17,7 +17,7 @@ DNS Manager
 
 ## Descrição Curta (80 caracteres)
 ```
-Gerencie seu DNS privado (DoT) de forma rápida e segura direto do Android
+Gerencie DNS Privado (DoT) com Widget, Quick Settings e Notificação em tempo real
 ```
 
 ## Descrição Completa (4000 caracteres)
@@ -40,22 +40,22 @@ DNS Manager é o aplicativo definitivo para gerenciar configurações de DNS Pri
 • Ative ou desative o DNS com um único toque
 
 📊 Monitoramento em Tempo Real
-• Notificação persistente com latência do servidor
+• Notificação persistente com latência e tempo de conexão
 • Histórico de uso com estatísticas detalhadas
 • Verificação automática de conectividade
 
 🎨 Interface Moderna
-• Design Material 3 com tema escuro
+• Design Material 3 com temas claro e escuro
 • Logos dos principais provedores DNS
 • Cores personalizáveis para cada servidor
 
 📦 Servidores Pré-configurados:
-• Cloudflare (1.1.1.1)
-• Google DNS
-• Quad9
-• AdGuard DNS
-• NextDNS
-• OpenDNS
+• Cloudflare (1.1.1.1) - Rápido e focado em privacidade
+• Google DNS - Confiável e estável
+• Quad9 - Bloqueio de malware
+• AdGuard DNS - Bloqueio de anúncios
+• NextDNS - Personalizável e seguro
+• OpenDNS - Proteção familiar
 
 ➕ Servidores Personalizados:
 • Adicione qualquer servidor DNS-over-TLS
@@ -64,17 +64,29 @@ DNS Manager é o aplicativo definitivo para gerenciar configurações de DNS Pri
 
 🔧 Recursos Avançados:
 • Backup e restauração de configurações
-• Importar/exportar servidores
+• Importar/exportar servidores (JSON)
 • Histórico de ativações com filtros
+• Estatísticas de tempo de uso
 
-⚠️ REQUISITOS IMPORTANTES:
+📱 Configuração Facilitada:
+• 3 métodos para conceder permissão:
+  - USB + ADB (com PC)
+  - App Shizuku (configuração inicial com PC)
+  - App LADB (100% pelo celular - Android 11+)
+• Tutoriais em vídeo do YouTube integrados
+• Instruções passo a passo detalhadas
+
+⚠️ REQUISITOS:
 • Android 9.0 (Pie) ou superior
-• Permissão especial via ADB (instruções no app)
-• A permissão WRITE_SECURE_SETTINGS deve ser concedida via computador uma única vez
+• Permissão especial via ADB (instruções detalhadas no app)
+• A permissão WRITE_SECURE_SETTINGS deve ser concedida uma única vez
 
-O DNS Manager não coleta dados pessoais e funciona totalmente offline após a configuração inicial. Todo o processamento é feito localmente no seu dispositivo.
+🔐 PRIVACIDADE:
+O DNS Manager não coleta dados pessoais e funciona totalmente offline após a configuração. Todo o processamento é feito localmente no seu dispositivo. Sem anúncios, sem rastreamento.
 
-🆓 Gratuito e sem anúncios!
+🆓 100% Gratuito e Open Source!
+
+📖 Código fonte disponível no GitHub
 
 Desenvolvido com ❤️ usando Flutter e Kotlin.
 ```
@@ -144,16 +156,9 @@ Resolução: 1920 x 1200 px
 
 ## Informações de Contato
 
-**Email de suporte:** (seu email)  
+**Email de suporte:** viniciuspaixao0101@gmail.com  
 **Website:** https://github.com/Vini-Paixao/dns-manager  
-**Política de Privacidade:** (criar URL)
-
----
-
-## Política de Privacidade (Obrigatória)
-
-O DNS Manager precisa de uma política de privacidade publicada online.
-Criar em: https://github.com/Vini-Paixao/dns-manager/blob/main/PRIVACY_POLICY.md
+**Política de Privacidade:** https://raw.githubusercontent.com/Vini-Paixao/dns-manager/main/PRIVACY_POLICY.md
 
 ---
 
@@ -176,12 +181,26 @@ Criar em: https://github.com/Vini-Paixao/dns-manager/blob/main/PRIVACY_POLICY.md
 ## Checklist de Publicação
 
 - [x] App Bundle (.aab) gerado e assinado
-- [ ] Screenshots capturados (mínimo 2)
-- [ ] Ícone 512x512 enviado
+- [x] Screenshots capturados
+- [x] Ícone 512x512 enviado
 - [ ] Feature Graphic 1024x500 criado
-- [ ] Descrição curta e completa
-- [ ] Política de Privacidade publicada
-- [ ] Classificação de conteúdo preenchida
-- [ ] Preço definido (Gratuito)
-- [ ] Países de distribuição selecionados
-- [ ] Formulário de declaração de dados preenchido
+- [x] Descrição curta e completa
+- [x] Política de Privacidade publicada
+- [x] Classificação de conteúdo preenchida
+- [x] Preço definido (Gratuito)
+- [x] Países de distribuição selecionados
+- [x] Formulário de declaração de dados preenchido
+
+---
+
+## What's New (Notas da Atualização) - v1.0.2
+
+```
+🎬 Novidades nesta versão:
+
+• Links agora abrem diretamente no navegador/app
+• Tutoriais em vídeo do YouTube para configuração
+• Instruções melhoradas para cada método de permissão
+• Melhorias de usabilidade na tela de configuração
+• Correções de bugs menores
+```

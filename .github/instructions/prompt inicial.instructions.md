@@ -3,8 +3,8 @@ applyTo: '**'
 ---
 # DNS Manager - Aplicativo Gerenciador de DNS Privado (Android/Flutter)
 
-**Versão:** 1.0.0 | **Repositório:** https://github.com/Vini-Paixao/dns-manager  
-**Status:** ✅ MVP Completo | **Última Atualização:** Janeiro 2025
+**Versão:** 1.0.1 | **Repositório:** https://github.com/Vini-Paixao/dns-manager  
+**Status:** ✅ Produção (Play Store) | **Última Atualização:** Dezembro 2025
 
 ---
 

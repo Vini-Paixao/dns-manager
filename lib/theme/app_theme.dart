@@ -44,6 +44,9 @@ class AppTheme {
   
   // Gradientes (usando AppColors)
   static const LinearGradient primaryGradient = AppColors.primaryGradient;
+  
+  /// Gradiente para o ícone/logo do app
+  static const LinearGradient iconGradient = AppColors.iconGradient;
 
   /// Tema escuro principal do app
   static ThemeData get darkTheme {

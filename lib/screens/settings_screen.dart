@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../providers/dns_provider.dart';
 import '../providers/notification_provider.dart';
 import '../providers/theme_provider.dart';
 import '../services/backup_service.dart';
 import '../services/permission_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/app_colors.dart';
+import '../widgets/app_logo.dart';
 import 'history_screen.dart';
 
 /// Tela de configurações do aplicativo
@@ -176,13 +179,13 @@ class SettingsScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isSelected 
-                    ? const Color(0xFF7C4DFF).withOpacity(0.15)
+                    ? AppColors.primary.withOpacity(0.15)
                     : (isDarkMode ? Colors.grey[800] : Colors.grey[100]),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 icon,
-                color: isSelected ? const Color(0xFF7C4DFF) : Colors.grey,
+                color: isSelected ? AppColors.primary : Colors.grey,
                 size: 22,
               ),
             ),
@@ -210,9 +213,9 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
             if (isSelected)
-              const Icon(
+              Icon(
                 Icons.check_circle_rounded,
-                color: Color(0xFF7C4DFF),
+                color: AppColors.primary,
                 size: 22,
               ),
           ],
@@ -240,7 +243,7 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           _buildSettingsTile(
             icon: Icons.refresh_rounded,
-            iconColor: const Color(0xFF7C4DFF),
+            iconColor: AppColors.primary,
             title: 'Restaurar servidores padrão',
             subtitle: 'Remove customizações e volta ao original',
             isDarkMode: isDarkMode,
@@ -250,7 +253,7 @@ class SettingsScreen extends ConsumerWidget {
           _buildDivider(isDarkMode),
           _buildSettingsTile(
             icon: Icons.speed_rounded,
-            iconColor: const Color(0xFF00BFA5),
+            iconColor: AppColors.secondary,
             title: 'Testar todos os servidores',
             subtitle: 'Mede a latência de conexão',
             isDarkMode: isDarkMode,
@@ -541,20 +544,12 @@ class SettingsScreen extends ConsumerWidget {
             title: 'Código fonte',
             subtitle: 'github.com/Vini-Paixao/dns-manager',
             isDarkMode: isDarkMode,
-            onTap: () {
+            onTap: () async {
               HapticFeedback.lightImpact();
-              Clipboard.setData(const ClipboardData(
-                text: 'https://github.com/Vini-Paixao/dns-manager',
-              ));
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Link copiado!'),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              );
+              final uri = Uri.parse('https://github.com/Vini-Paixao/dns-manager');
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              }
             },
           ),
           _buildDivider(isDarkMode),
@@ -1192,34 +1187,51 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _showAboutDialog(BuildContext context) {
-    showAboutDialog(
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    
+    showDialog(
       context: context,
-      applicationName: 'DNS Manager',
-      applicationVersion: '1.0.0',
-      applicationIcon: Container(
-        width: 60,
-        height: 60,
-        decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
-          borderRadius: BorderRadius.circular(12),
+      builder: (context) => AlertDialog(
+        backgroundColor: isDarkMode ? AppColors.darkSurface : AppColors.lightSurface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            const AppLogo.small(showShadow: false),
+            const SizedBox(width: 12),
+            const Text('DNS Manager'),
+          ],
         ),
-        child: const Icon(Icons.dns_rounded, color: Colors.white, size: 32),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Versão 1.0.1',
+              style: TextStyle(color: Colors.grey[500], fontSize: 13),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Gerencie seu DNS privado (DNS over TLS) de forma simples e rápida.',
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Desenvolvido por Vinícius Paixão',
+              style: TextStyle(color: Colors.grey[600], fontSize: 12),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Requer permissão WRITE_SECURE_SETTINGS via ADB.',
+              style: TextStyle(color: Colors.grey[500], fontSize: 11),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Fechar'),
+          ),
+        ],
       ),
-      children: [
-        const Text(
-          'Gerencie seu DNS privado (DNS over TLS) de forma simples e rápida.',
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'Desenvolvido por Vinícius Paixão',
-          style: TextStyle(color: Colors.grey[600], fontSize: 12),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Requer permissão WRITE_SECURE_SETTINGS via ADB.',
-          style: TextStyle(color: Colors.grey[500], fontSize: 11),
-        ),
-      ],
     );
   }
 

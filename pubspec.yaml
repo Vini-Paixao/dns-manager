@@ -2,13 +2,17 @@ name: dns_manager
 description: "Gerenciador de DNS Privado (DNS over TLS) para Android"
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.2+2
 
 environment:
   sdk: ^3.6.0
 
 dependencies:
   flutter:
+    sdk: flutter
+  
+  # Localização em português
+  flutter_localizations:
     sdk: flutter
 
   # Gerenciamento de estado com Riverpod
@@ -42,6 +46,9 @@ dependencies:
   
   # Notificações locais
   flutter_local_notifications: ^18.0.0
+  
+  # Abrir URLs externas
+  url_launcher: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -83,6 +90,7 @@ flutter:
   # Assets do app (logos dos servidores DNS)
   assets:
     - assets/logos/
+    - assets/icon/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

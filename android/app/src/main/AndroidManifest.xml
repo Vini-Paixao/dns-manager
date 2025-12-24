@@ -19,6 +19,18 @@
     <!-- Permissão para boot completed (reiniciar notificação após reboot) -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     
+    <!-- Queries para url_launcher (Android 11+) -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
+        </intent>
+    </queries>
+    
     <application
         android:label="DNS Manager"
         android:name="${applicationName}"

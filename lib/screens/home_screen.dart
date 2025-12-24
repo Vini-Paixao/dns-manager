@@ -3,9 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/dns_server.dart';
 import '../providers/dns_provider.dart';
+import '../providers/history_provider.dart';
 import '../services/dns_service.dart';
+import '../theme/app_colors.dart';
 import '../widgets/server_card.dart';
 import '../widgets/server_form_dialog.dart';
+import '../widgets/server_info_dialog.dart';
 import '../widgets/server_options_sheet.dart';
 import '../widgets/status_card.dart';
 import 'settings_screen.dart';
@@ -72,7 +75,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: _refreshStatus,
-          color: const Color(0xFF7C4DFF),
+          color: AppColors.primary,
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
@@ -113,7 +116,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       // FAB para adicionar servidor
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showAddServerDialog,
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: AppColors.primary,
         icon: const Icon(Icons.add_rounded),
         label: const Text('Novo DNS'),
       ),
@@ -172,11 +175,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               },
               icon: Icon(
                 _isReorderMode ? Icons.done_rounded : Icons.swap_vert_rounded,
-                color: _isReorderMode ? const Color(0xFF00BFA5) : null,
+                color: _isReorderMode ? AppColors.secondary : null,
               ),
               style: IconButton.styleFrom(
                 backgroundColor: _isReorderMode 
-                    ? const Color(0xFF00BFA5).withOpacity(0.2)
+                    ? AppColors.secondary.withOpacity(0.2)
                     : cardColor,
               ),
             ),
@@ -284,7 +287,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             icon: const Icon(Icons.check_rounded, size: 18),
             label: const Text('Concluir'),
             style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFF00BFA5),
+              foregroundColor: AppColors.secondary,
             ),
           ),
       ],
@@ -385,6 +388,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               onTap: () => _selectServer(server),
               onLongPress: () => _showServerOptions(server),
               onFavoriteToggle: () => _toggleFavorite(server),
+              onInfoTap: () => ServerInfoDialog.show(
+                context: context,
+                server: server,
+              ),
             );
           },
           childCount: servers.length,
@@ -409,15 +416,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       
       if (enable) {
         final server = selectedServer ?? ref.read(serversProvider).first;
+        
+        // Testa latência antes de ativar
+        final latency = await dnsService.testLatency(server.hostname);
+        
         final success = await dnsService.setDns(server.hostname);
         
         if (success) {
           ref.read(selectedServerProvider.notifier).selectServer(server);
           _showSnackBar('DNS ativado: ${server.name}', isSuccess: true);
+          
+          // Registra ativação no histórico
+          ref.read(historyProvider.notifier).recordActivation(
+            serverId: server.id,
+            serverName: server.name,
+            hostname: server.hostname,
+            latencyMs: latency,
+          );
         } else {
           _showSnackBar('Erro ao ativar DNS. Verifique a permissão.', isSuccess: false);
+          
+          // Registra falha no histórico
+          ref.read(historyProvider.notifier).recordFailure(
+            serverId: server.id,
+            serverName: server.name,
+            hostname: server.hostname,
+            failureReason: 'Falha ao ativar DNS - permissão negada',
+          );
         }
       } else {
+        // Registra desativação antes de desativar
+        ref.read(historyProvider.notifier).recordDeactivation();
+        
         final success = await dnsService.disableDns();
         
         if (success) {
@@ -445,12 +475,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       
       try {
         final dnsService = ref.read(dnsServiceProvider);
+        
+        // Registra desativação do servidor anterior
+        ref.read(historyProvider.notifier).recordDeactivation();
+        
+        // Testa latência antes de ativar
+        final latency = await dnsService.testLatency(server.hostname);
+        
         final success = await dnsService.setDns(server.hostname);
         
         if (success) {
           _showSnackBar('Alterado para ${server.name}', isSuccess: true);
+          
+          // Registra ativação do novo servidor no histórico
+          ref.read(historyProvider.notifier).recordActivation(
+            serverId: server.id,
+            serverName: server.name,
+            hostname: server.hostname,
+            latencyMs: latency,
+          );
         } else {
           _showSnackBar('Erro ao alterar servidor', isSuccess: false);
+          
+          // Registra falha no histórico
+          ref.read(historyProvider.notifier).recordFailure(
+            serverId: server.id,
+            serverName: server.name,
+            hostname: server.hostname,
+            failureReason: 'Falha ao trocar de servidor',
+          );
         }
         
         ref.read(dnsStatusRefreshProvider.notifier).state++;
@@ -554,7 +607,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           children: [
             Icon(
               isSuccess ? Icons.check_circle : Icons.error,
-              color: isSuccess ? const Color(0xFF00BFA5) : Colors.red,
+              color: isSuccess ? AppColors.success : Colors.red,
             ),
             const SizedBox(width: 12),
             Expanded(child: Text(message)),

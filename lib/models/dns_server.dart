@@ -14,6 +14,9 @@ import 'package:flutter/material.dart';
 /// - isHidden: se está oculto da dashboard principal
 /// - order: ordem personalizada para drag-and-drop
 /// - createdAt: timestamp de criação
+/// - description: descrição detalhada do servidor (opcional)
+/// - websiteUrl: URL do site oficial (opcional)
+/// - benefits: lista de benefícios/recursos (opcional)
 class DnsServer {
   final String id;
   final String name;
@@ -26,6 +29,9 @@ class DnsServer {
   final bool isHidden;
   final int order;
   final int createdAt;
+  final String? description;
+  final String? websiteUrl;
+  final List<String>? benefits;
 
   const DnsServer({
     required this.id,
@@ -39,6 +45,9 @@ class DnsServer {
     this.isHidden = false,
     this.order = 0,
     this.createdAt = 0,
+    this.description,
+    this.websiteUrl,
+    this.benefits,
   });
 
   /// Retorna a cor como Color do Flutter
@@ -62,6 +71,12 @@ class DnsServer {
     bool? isHidden,
     int? order,
     int? createdAt,
+    String? description,
+    bool clearDescription = false,
+    String? websiteUrl,
+    bool clearWebsiteUrl = false,
+    List<String>? benefits,
+    bool clearBenefits = false,
   }) {
     return DnsServer(
       id: id ?? this.id,
@@ -75,6 +90,9 @@ class DnsServer {
       isHidden: isHidden ?? this.isHidden,
       order: order ?? this.order,
       createdAt: createdAt ?? this.createdAt,
+      description: clearDescription ? null : (description ?? this.description),
+      websiteUrl: clearWebsiteUrl ? null : (websiteUrl ?? this.websiteUrl),
+      benefits: clearBenefits ? null : (benefits ?? this.benefits),
     );
   }
 
@@ -92,6 +110,9 @@ class DnsServer {
       'isHidden': isHidden,
       'order': order,
       'createdAt': createdAt,
+      'description': description,
+      'websiteUrl': websiteUrl,
+      'benefits': benefits,
     };
   }
 
@@ -109,6 +130,9 @@ class DnsServer {
       isHidden: json['isHidden'] as bool? ?? false,
       order: json['order'] as int? ?? 0,
       createdAt: json['createdAt'] as int? ?? 0,
+      description: json['description'] as String?,
+      websiteUrl: json['websiteUrl'] as String?,
+      benefits: (json['benefits'] as List<dynamic>?)?.cast<String>(),
     );
   }
 
@@ -147,6 +171,15 @@ class DefaultDnsServers {
       logoAsset: 'assets/logos/cloudflare.svg',
       colorValue: 0xFFF38020, // Orange
       order: 0,
+      description: 'O Cloudflare DNS (1.1.1.1) é um resolvedor DNS público focado em velocidade e privacidade. Não registra seu endereço IP e promete deletar logs em 24 horas. É considerado um dos DNS mais rápidos do mundo.',
+      websiteUrl: 'https://1.1.1.1',
+      benefits: [
+        'Um dos DNS mais rápidos do mundo',
+        'Não vende seus dados para anunciantes',
+        'Suporte completo a DNS over HTTPS/TLS',
+        'Opção com bloqueio de malware (1.1.1.2)',
+        'Auditado por terceiros para garantir privacidade',
+      ],
     ),
     DnsServer(
       id: 'google',
@@ -156,6 +189,15 @@ class DefaultDnsServers {
       logoAsset: 'assets/logos/google.svg',
       colorValue: 0xFF4285F4, // Blue
       order: 1,
+      description: 'O Google Public DNS é um serviço gratuito oferecido pelo Google desde 2009. É conhecido por sua alta confiabilidade, ampla cobertura global e tempos de resposta consistentes.',
+      websiteUrl: 'https://developers.google.com/speed/public-dns',
+      benefits: [
+        'Alta disponibilidade e confiabilidade',
+        'Cobertura global com servidores em todo mundo',
+        'Proteção contra ataques DNS',
+        'Suporte a DNSSEC para validação',
+        'Documentação técnica completa',
+      ],
     ),
     DnsServer(
       id: 'quad9',
@@ -165,6 +207,15 @@ class DefaultDnsServers {
       logoAsset: 'assets/logos/quad9.svg',
       colorValue: 0xFF2196F3, // Light Blue
       order: 2,
+      description: 'O Quad9 é um DNS público sem fins lucrativos que bloqueia automaticamente domínios maliciosos. Utiliza inteligência de ameaças de mais de 20 parceiros de segurança para proteger sua navegação.',
+      websiteUrl: 'https://quad9.net',
+      benefits: [
+        'Bloqueio automático de malware e phishing',
+        'Organização sem fins lucrativos',
+        'Não coleta nem vende dados pessoais',
+        'Sediado na Suíça (leis rígidas de privacidade)',
+        'Atualização constante da lista de ameaças',
+      ],
     ),
     DnsServer(
       id: 'adguard',
@@ -174,24 +225,15 @@ class DefaultDnsServers {
       logoAsset: 'assets/logos/adguard.svg',
       colorValue: 0xFF68BC71, // Green
       order: 3,
-    ),
-    DnsServer(
-      id: 'opendns',
-      name: 'OpenDNS',
-      hostname: 'doh.opendns.com',
-      isCustom: false,
-      logoAsset: 'assets/logos/opendns.svg',
-      colorValue: 0xFF049FD9, // Cyan
-      order: 4,
-    ),
-    DnsServer(
-      id: 'nextdns',
-      name: 'NextDNS',
-      hostname: 'dns.nextdns.io',
-      isCustom: false,
-      logoAsset: 'assets/logos/nextdns.svg',
-      colorValue: 0xFF007AFF, // Blue
-      order: 5,
+      description: 'O AdGuard DNS é especializado em bloqueio de anúncios e rastreadores a nível de DNS. Além de acelerar sua navegação removendo ads, também protege contra sites maliciosos.',
+      websiteUrl: 'https://adguard-dns.io',
+      benefits: [
+        'Bloqueio de anúncios em todos os apps',
+        'Proteção contra rastreadores',
+        'Bloqueio de sites maliciosos e phishing',
+        'Navegação mais rápida sem carregar ads',
+        'Modo família com filtro de conteúdo adulto',
+      ],
     ),
   ];
 

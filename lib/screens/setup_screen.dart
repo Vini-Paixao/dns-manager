@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/dns_provider.dart';
-import '../theme/app_theme.dart';
+import '../theme/app_colors.dart';
+import '../widgets/app_logo.dart';
+import 'permission_options_screen.dart';
 
 /// Tela de setup inicial com instruções para conceder permissão via ADB
 /// 
@@ -69,26 +71,10 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Ícone animado
-        Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            gradient: AppTheme.primaryGradient,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF7C4DFF).withOpacity(0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: const Icon(
-            Icons.dns_rounded,
-            size: 40,
-            color: Colors.white,
-          ),
+        // Logo do app
+        const AppLogo(
+          size: 80,
+          borderRadius: 20,
         ),
         
         const SizedBox(height: 24),
@@ -103,7 +89,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         Text(
           'Precisamos de uma permissão especial para gerenciar o DNS do seu dispositivo.',
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: Colors.grey[400],
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
           ),
         ),
       ],
@@ -111,33 +97,133 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
   }
 
   Widget _buildExplanationCard() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: AppColors.primary.withOpacity(0.3),
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.info_outline_rounded,
+                color: AppColors.primary,
+                size: 24,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'A permissão WRITE_SECURE_SETTINGS não pode ser concedida diretamente pelo Android. '
+                  'É necessário usar o ADB (Android Debug Bridge) conectado ao computador.',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+            ],
+          ),
+        ),
+        
+        // Card com mais opções
+        _buildMoreOptionsCard(),
+      ],
+    );
+  }
+  
+  Widget _buildMoreOptionsCard() {
     return Container(
+      margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF7C4DFF).withOpacity(0.1),
+        gradient: LinearGradient(
+          colors: [
+            AppColors.secondary.withOpacity(0.15),
+            AppColors.secondary.withOpacity(0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF7C4DFF).withOpacity(0.3),
+          color: AppColors.secondary.withOpacity(0.3),
         ),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
-            Icons.info_outline_rounded,
-            color: Color(0xFF7C4DFF),
-            size: 24,
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.secondary.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.lightbulb_outline,
+                  color: AppColors.secondaryDark,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Não tem PC?',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.secondaryDark,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Veja outras formas de conceder a permissão sem computador!',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              'A permissão WRITE_SECURE_SETTINGS não pode ser concedida diretamente pelo Android. '
-              'É necessário usar o ADB (Android Debug Bridge) conectado ao computador.',
-              style: Theme.of(context).textTheme.bodyMedium,
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _openPermissionOptions,
+              icon: const Icon(Icons.apps),
+              label: const Text('Ver Todas as Opções'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.secondaryDark,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
             ),
           ),
         ],
       ),
     );
+  }
+  
+  Future<void> _openPermissionOptions() async {
+    final result = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (context) => const PermissionOptionsScreen(),
+      ),
+    );
+    
+    if (result == true && mounted) {
+      // Permissão foi concedida
+      _checkPermission();
+    }
   }
 
   Widget _buildSetupSteps() {
@@ -185,12 +271,12 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: isActive 
-                    ? const Color(0xFF7C4DFF).withOpacity(0.15)
-                    : const Color(0xFF2D2D2D),
+                    ? AppColors.primary.withOpacity(0.15)
+                    : Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isActive 
-                      ? const Color(0xFF7C4DFF)
+                      ? AppColors.primary
                       : Colors.transparent,
                   width: 2,
                 ),
@@ -203,10 +289,10 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                     height: 36,
                     decoration: BoxDecoration(
                       color: isCompleted
-                          ? const Color(0xFF00BFA5)
+                          ? AppColors.success
                           : isActive
-                              ? const Color(0xFF7C4DFF)
-                              : Colors.grey[700],
+                              ? AppColors.primary
+                              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                       shape: BoxShape.circle,
                     ),
                     child: Center(
@@ -233,7 +319,9 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: isActive ? Colors.white : Colors.grey[400],
+                            color: isActive 
+                                ? Theme.of(context).colorScheme.onSurface 
+                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -241,7 +329,9 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                           step['description'] as String,
                           style: TextStyle(
                             fontSize: 13,
-                            color: isActive ? Colors.grey[300] : Colors.grey[600],
+                            color: isActive 
+                                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.8)
+                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                           ),
                         ),
                       ],
@@ -251,7 +341,9 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                   // Ícone
                   Icon(
                     step['icon'] as IconData,
-                    color: isActive ? const Color(0xFF7C4DFF) : Colors.grey[600],
+                    color: isActive 
+                        ? AppColors.primary 
+                        : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                     size: 24,
                   ),
                 ],
@@ -275,10 +367,12 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFF1A1A2E),
+            color: Theme.of(context).brightness == Brightness.dark 
+                ? const Color(0xFF1A1A2E)
+                : const Color(0xFFF5F5F5),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Colors.grey[800]!,
+              color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
             ),
           ),
           child: Column(
@@ -286,19 +380,21 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
               // Comando
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.chevron_right,
-                    color: Color(0xFF00BFA5),
+                    color: AppColors.secondary,
                     size: 20,
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: SelectableText(
                       adbCommand,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'monospace',
                         fontSize: 12,
-                        color: Color(0xFF00BFA5),
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? AppColors.secondary
+                            : AppColors.secondaryDark,
                       ),
                     ),
                   ),
@@ -314,8 +410,8 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                   icon: const Icon(Icons.copy, size: 18),
                   label: const Text('Copiar comando'),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF00BFA5),
-                    side: const BorderSide(color: Color(0xFF00BFA5)),
+                    foregroundColor: AppColors.secondary,
+                    side: BorderSide(color: AppColors.secondary),
                   ),
                 ),
               ),
@@ -349,7 +445,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
               _isCheckingPermission ? 'Verificando...' : 'Verificar Permissão',
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF7C4DFF),
+              backgroundColor: AppColors.primary,
             ),
           ),
         ),
@@ -368,16 +464,17 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
 
   void _copyCommand() {
     Clipboard.setData(const ClipboardData(text: adbCommand));
+    final colorScheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.check_circle, color: Color(0xFF00BFA5)),
+            const Icon(Icons.check_circle, color: AppColors.success),
             const SizedBox(width: 12),
-            const Text('Comando copiado!'),
+            Text('Comando copiado!', style: TextStyle(color: colorScheme.onInverseSurface)),
           ],
         ),
-        backgroundColor: const Color(0xFF2D2D2D),
+        backgroundColor: colorScheme.inverseSurface,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
@@ -404,20 +501,22 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
       } else {
         // Permissão ainda não concedida
         if (mounted) {
+          final snackColorScheme = Theme.of(context).colorScheme;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
                 children: [
                   const Icon(Icons.warning_amber_rounded, color: Colors.orange),
                   const SizedBox(width: 12),
-                  const Expanded(
+                  Expanded(
                     child: Text(
                       'Permissão não encontrada. Execute o comando ADB e tente novamente.',
+                      style: TextStyle(color: snackColorScheme.onInverseSurface),
                     ),
                   ),
                 ],
               ),
-              backgroundColor: const Color(0xFF2D2D2D),
+              backgroundColor: snackColorScheme.inverseSurface,
               behavior: SnackBarBehavior.floating,
               duration: const Duration(seconds: 4),
             ),
@@ -436,7 +535,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1E1E),
+        backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -445,12 +544,12 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: const Color(0xFF00BFA5).withOpacity(0.2),
+                color: AppColors.success.withOpacity(0.2),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.check_circle,
-                color: Color(0xFF00BFA5),
+                color: AppColors.success,
                 size: 48,
               ),
             ),
@@ -466,7 +565,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
             Text(
               'Agora você pode gerenciar o DNS privado do seu dispositivo.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey[400]),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
             ),
           ],
         ),
@@ -479,7 +578,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                 Navigator.of(context).pushReplacementNamed('/home');
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF00BFA5),
+                backgroundColor: AppColors.primary,
               ),
               child: const Text('Começar'),
             ),
@@ -493,7 +592,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1E1E),
+        backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Text('Ajuda'),
         content: SingleChildScrollView(
@@ -544,14 +643,14 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           title,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
-            color: Color(0xFF7C4DFF),
+            color: AppColors.primary,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           content,
           style: TextStyle(
-            color: Colors.grey[400],
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
             fontSize: 13,
           ),
         ),

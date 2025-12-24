@@ -1,9 +1,9 @@
 # DNS Manager App - Plano de Implementação
 
-**Versão Atual: 1.0.0** | **Repositório:** https://github.com/Vini-Paixao/dns-manager  
-**Última Atualização:** Janeiro 2025
+**Versão Atual: 1.0.1** | **Repositório:** https://github.com/Vini-Paixao/dns-manager  
+**Status:** Produção (Play Store) | **Última Atualização:** Dezembro 2025
 
-Aplicativo Android em Flutter para gerenciar configurações de DNS privado (DNS over TLS) com Quick Settings Tile.
+Aplicativo Android em Flutter para gerenciar configurações de DNS privado (DNS over TLS) com Quick Settings Tile, Widget e Notificação Persistente.
 
 ---
 
@@ -14,27 +14,25 @@ Aplicativo Android em Flutter para gerenciar configurações de DNS privado (DNS
 | Funcionalidade | Descrição | Status |
 |----------------|-----------|--------|
 | Projeto Flutter | Estrutura base, pubspec.yaml, configurações | ✅ Completo |
-| Código Nativo Android | DnsHelper, DnsTileService, MainActivity | ✅ Completo |
+| Código Nativo Android | DnsHelper, DnsTileService, DnsWidgetProvider, DnsNotificationService | ✅ Completo |
 | Platform Channels | Comunicação Flutter ↔ Kotlin | ✅ Completo |
-| UI Material 3 | Tema dark, tipografia Outfit, cores vibrantes | ✅ Completo |
+| UI Material 3 | Temas claro e escuro, tipografia Outfit, cores do logo | ✅ Completo |
 | Status Card | Exibe estado atual do DNS com animações | ✅ Completo |
 | Grid de Servidores | Cards com logos SVG e cores personalizadas | ✅ Completo |
 | Sistema de Favoritos | Marcar servidores como favoritos | ✅ Completo |
 | Drag-and-Drop | Reordenar servidores com modo de edição | ✅ Completo |
 | Servidores Customizados | Adicionar/editar servidores com image picker | ✅ Completo |
 | Quick Settings Tile | Toggle rápido na central de notificações | ✅ Completo |
+| Widget Home Screen | Widget 2x1 com status e controle rápido | ✅ Completo |
+| Notificação Persistente | Latência e tempo de conexão em tempo real | ✅ Completo |
+| Histórico de Uso | Registros de ativação com estatísticas | ✅ Completo |
+| Backup/Restauração | Exportar/importar configurações JSON | ✅ Completo |
+| Múltiplas Opções Permissão | ADB via PC, Shizuku, ADB Wi-Fi | ✅ Completo |
 | Ícone do App | Ícone personalizado com gradiente radial | ✅ Completo |
-| Tela de Setup | Instruções para permissão ADB | ✅ Completo |
+| Tela de Setup | Instruções detalhadas para permissão | ✅ Completo |
 | Persistência | SharedPreferences para salvar configurações | ✅ Completo |
 | GitHub | Repositório publicado com README e LICENSE | ✅ Completo |
-
-### ⏳ Funcionalidades Pendentes
-
-| Funcionalidade | Descrição | Prioridade |
-|----------------|-----------|------------|
-| Layout Adaptivo | 1 coluna para ≤2 servidores, 2 colunas para 3+ | Média |
-| Screenshots README | Adicionar capturas de tela no README | Baixa |
-| Play Store | Preparação para publicação | Baixa |
+| Play Store | App publicado na Google Play Store | ✅ Completo |
 
 ---
 

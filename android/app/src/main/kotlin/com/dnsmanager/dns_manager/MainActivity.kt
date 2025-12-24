@@ -189,6 +189,23 @@ class MainActivity : FlutterActivity() {
                     }.start()
                 }
                 
+                // Obtém versão do Android (útil para verificações de compatibilidade)
+                "getAndroidSdkVersion" -> {
+                    result.success(Build.VERSION.SDK_INT)
+                }
+                
+                // Abre configurações de desenvolvedor
+                "openDeveloperSettings" -> {
+                    try {
+                        val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        applicationContext.startActivity(intent)
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.error("SETTINGS_ERROR", "Não foi possível abrir configurações: ${e.message}", null)
+                    }
+                }
+                
                 else -> {
                     result.notImplemented()
                 }
