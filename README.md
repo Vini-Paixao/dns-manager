@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>🛡️ Gerenciador de DNS Privado (DNS over TLS) para Android</strong>
+  <strong>🛡️ Seu DNS Privado Sob Controle</strong>
 </p>
 
 <p align="center">
@@ -14,8 +14,14 @@
   </a>
   <img src="https://img.shields.io/badge/Flutter-3.6+-blue?logo=flutter" alt="Flutter">
   <img src="https://img.shields.io/badge/Android-9.0+-brightgreen?logo=android" alt="Android">
-  <img src="https://img.shields.io/badge/Version-1.0.1-orange" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.0.2-orange" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License">
+</p>
+
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=com.dnsmanager.dns_manager">
+    <img src="https://play.google.com/intl/en_us/badges/static/images/badges/pt-br_badge_web_generic.png" width="250" alt="Disponível no Google Play">
+  </a>
 </p>
 
 ---
@@ -24,19 +30,63 @@
 
 O **DNS Manager** é o aplicativo definitivo para gerenciar configurações de DNS Privado (DNS over TLS - DoT) no seu dispositivo Android. Com uma interface intuitiva e recursos avançados, você tem controle total sobre sua conexão de internet.
 
-### ✨ Funcionalidades Principais
+---
 
-- 🔒 **DNS Privado Seguro** - Configure DNS over TLS (DoT) facilmente
-- ⚡ **Quick Settings Tile** - Controle rápido na central de notificações  
-- 📱 **Widget na Tela Inicial** - Status do DNS sempre visível
-- 📊 **Notificação Persistente** - Latência e tempo de conexão em tempo real
-- 📋 **4 Servidores Pré-configurados** - Cloudflare, Google, Quad9, AdGuard
-- ➕ **Servidores Personalizados** - Adicione seus próprios servidores com logo e cor
-- ⭐ **Sistema de Favoritos** - Acesso rápido aos seus servidores preferidos
-- 🔀 **Drag-and-Drop** - Reordene servidores como preferir
-- 📈 **Histórico de Uso** - Estatísticas detalhadas de conexão
-- 💾 **Backup e Restauração** - Exporte/importe suas configurações
-- 🎨 **Interface Moderna** - Material Design 3 com temas claro e escuro
+## ✨ Funcionalidades
+
+### 🔒 DNS Privado Seguro
+- Configure facilmente DNS over TLS (DoT) no seu Android
+- Proteja suas consultas DNS contra interceptação
+- Suporte a múltiplos provedores de DNS
+
+### ⚡ Acesso Rápido
+- **Quick Settings Tile** na barra de notificações
+- **Widget na tela inicial** para status em tempo real
+- Ative ou desative o DNS com um único toque
+
+### 📊 Monitoramento em Tempo Real
+- Notificação persistente com latência e tempo de conexão
+- Histórico de uso com estatísticas detalhadas
+- Verificação automática de conectividade
+
+### 🎨 Interface Moderna
+- Design Material 3 com temas claro e escuro
+- Logos dos principais provedores DNS
+- Cores personalizáveis para cada servidor
+
+### 📦 Servidores Pré-configurados
+
+| Provedor | Destaque |
+|----------|----------|
+| Cloudflare (1.1.1.1) | Rápido e focado em privacidade |
+| Google DNS | Confiável e estável |
+| Quad9 | Bloqueio de malware |
+| AdGuard DNS | Bloqueio de anúncios |
+| NextDNS | Personalizável e seguro |
+| OpenDNS | Proteção familiar |
+
+### ➕ Servidores Personalizados
+- Adicione qualquer servidor DNS-over-TLS
+- Logo personalizada e cores
+- Organize com favoritos e reordenação (drag-and-drop)
+
+### 🔧 Recursos Avançados
+- Backup e restauração de configurações (JSON)
+- Importar/exportar servidores
+- Histórico de ativações com filtros
+- Estatísticas de tempo de uso
+
+### 📱 Configuração Facilitada
+
+3 métodos para conceder a permissão necessária:
+
+| Método | Descrição |
+|--------|-----------|
+| **USB + ADB** | Com computador (recomendado) |
+| **App Shizuku** | Configuração inicial com PC, depois sem cabo |
+| **App LADB** | 100% pelo celular (Android 11+) |
+
+> 🎬 Tutoriais em vídeo do YouTube integrados para cada método!
 
 ---
 
@@ -48,18 +98,25 @@ O **DNS Manager** é o aplicativo definitivo para gerenciar configurações de D
   <img src="https://play.google.com/intl/en_us/badges/static/images/badges/pt-br_badge_web_generic.png" width="200" alt="Disponível no Google Play">
 </a>
 
-### Via APK
+### Via APK (Download Direto)
 
-1. Baixe o APK da [página de releases](../../releases)
-2. Instale o APK no seu dispositivo
-3. Conceda a permissão especial (veja abaixo)
+1. Baixe o arquivo `app-release.apk` na [página de releases](../../releases)
+2. No Android, vá em **Configurações > Segurança > Fontes desconhecidas** e ative
+3. Abra o arquivo APK e toque em **Instalar**
+4. Siga as instruções no app para conceder a permissão
 
-### Requisitos
+---
 
-- Android 9.0 (Pie) ou superior
-- Computador com ADB para conceder permissão (apenas uma vez)
+## 📋 Requisitos
 
-### ⚠️ Permissão Necessária
+| Requisito | Valor |
+|-----------|-------|
+| **Android mínimo** | 9.0 (Pie) - API 28 |
+| **Permissão especial** | `WRITE_SECURE_SETTINGS` via ADB |
+
+---
+
+## ⚠️ Permissão Necessária
 
 O Android requer uma permissão especial para que apps configurem o DNS Privado. Você precisa conceder **uma única vez** via ADB:
 
@@ -67,9 +124,20 @@ O Android requer uma permissão especial para que apps configurem o DNS Privado.
 adb shell pm grant com.dnsmanager.dns_manager android.permission.WRITE_SECURE_SETTINGS
 ```
 
-> 💡 **Dica:** O app inclui instruções detalhadas e múltiplas opções para conceder a permissão (PC, Shizuku, ADB Wi-Fi).
+> 💡 **Dica:** O app inclui instruções detalhadas e tutoriais em vídeo para cada método de configuração (USB + ADB, Shizuku, LADB).
 
-**Nota:** Esta permissão precisa ser concedida novamente apenas se você reinstalar o app.
+> **Nota:** Esta permissão precisa ser concedida novamente apenas se você reinstalar o app.
+
+---
+
+## 🔐 Privacidade
+
+- ✅ **Não coleta dados pessoais**
+- ✅ **Funciona totalmente offline** após a configuração
+- ✅ **Sem anúncios, sem rastreamento**
+- ✅ **100% Open Source**
+
+📄 Veja nossa [Política de Privacidade](PRIVACY_POLICY.md) completa.
 
 ---
 
@@ -85,7 +153,7 @@ adb shell pm grant com.dnsmanager.dns_manager android.permission.WRITE_SECURE_SE
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-usuario/dns-manager.git
+git clone https://github.com/Vini-Paixao/dns-manager.git
 
 # Entre no diretório
 cd dns-manager
@@ -107,7 +175,9 @@ lib/
 ├── providers/
 │   └── dns_provider.dart     # State management (Riverpod)
 ├── screens/
-│   └── home_screen.dart      # Tela principal
+│   ├── home_screen.dart      # Tela principal
+│   ├── settings_screen.dart  # Configurações
+│   └── history_screen.dart   # Histórico de uso
 ├── services/
 │   └── dns_service.dart      # Serviço de configuração DNS
 ├── theme/
@@ -118,8 +188,10 @@ lib/
 android/
 ├── app/src/main/
 │   ├── kotlin/.../
-│   │   ├── MainActivity.kt   # Activity principal
-│   │   └── DnsTileService.kt # Quick Settings Tile
+│   │   ├── MainActivity.kt       # Activity principal
+│   │   ├── DnsTileService.kt     # Quick Settings Tile
+│   │   ├── DnsWidgetProvider.kt  # Widget da tela inicial
+│   │   └── DnsNotificationService.kt # Notificação persistente
 │   └── res/
 │       └── drawable/         # Ícones e recursos
 ```
@@ -128,38 +200,14 @@ android/
 
 ## 📦 Tecnologias Utilizadas
 
-- **Flutter** - Framework de UI
-- **Riverpod** - Gerenciamento de estado
-- **SharedPreferences** - Persistência de dados
-- **Flutter SVG** - Renderização de logos SVG
-- **Image Picker** - Seleção de imagens customizadas
-
----
-
-## 🌐 Servidores DNS Pré-configurados
-
-| Provedor | Hostname | Descrição |
-|----------|----------|-----------|
-| Cloudflare | `1dot1dot1dot1.cloudflare-dns.com` | Rápido e focado em privacidade |
-| Google | `dns.google` | Confiável e estável |
-| Quad9 | `dns.quad9.net` | Bloqueio de malware |
-| AdGuard | `dns.adguard.com` | Bloqueio de anúncios |
-
----
-
-## 🔒 Privacidade
-
-- **Sem coleta de dados** - Tudo funciona localmente no seu dispositivo
-- **Sem anúncios** - Experiência limpa e sem interrupções
-- **Código aberto** - Transparência total
-
-Veja nossa [Política de Privacidade](PRIVACY_POLICY.md) completa.
-
----
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+| Tecnologia | Uso |
+|------------|-----|
+| **Flutter** | Framework de UI |
+| **Kotlin** | Código nativo Android |
+| **Riverpod** | Gerenciamento de estado |
+| **SharedPreferences** | Persistência de dados |
+| **Flutter SVG** | Renderização de logos |
+| **URL Launcher** | Abertura de links externos |
 
 ---
 
@@ -173,6 +221,12 @@ Contribuições são bem-vindas! Sinta-se à vontade para:
 
 ---
 
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
 ## ⭐ Apoie o Projeto
 
 Se o DNS Manager foi útil para você:
@@ -182,6 +236,12 @@ Se o DNS Manager foi útil para você:
 - 📢 Compartilhe com amigos
 
 ---
+
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=com.dnsmanager.dns_manager">
+    <img src="https://play.google.com/intl/en_us/badges/static/images/badges/pt-br_badge_web_generic.png" width="200" alt="Disponível no Google Play">
+  </a>
+</p>
 
 <p align="center">
   Desenvolvido com ❤️ usando Flutter e Kotlin
