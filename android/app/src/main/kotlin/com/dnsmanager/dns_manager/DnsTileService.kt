@@ -78,6 +78,9 @@ class DnsTileService : TileService() {
             val enabled = status["enabled"] as? Boolean ?: false
             val hostname = status["hostname"] as? String
             
+            // Usa o logo do app como ícone
+            tile.icon = Icon.createWithResource(this, R.drawable.ic_app_logo)
+            
             if (enabled) {
                 tile.state = Tile.STATE_ACTIVE
                 tile.label = "DNS Privado"
