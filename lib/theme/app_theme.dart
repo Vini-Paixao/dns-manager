@@ -134,7 +134,7 @@ class AppTheme {
       ),
       
       // Cards
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: _cardColor,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -216,9 +216,9 @@ class AppTheme {
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return _primaryColor.withOpacity(0.5);
+            return _primaryColor.withValues(alpha: 0.5);
           }
-          return Colors.grey.withOpacity(0.3);
+          return Colors.grey.withValues(alpha: 0.3);
         }),
       ),
       
@@ -245,7 +245,7 @@ class AppTheme {
       ),
       
       // Dialog
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: _surfaceColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
@@ -357,10 +357,10 @@ class AppTheme {
       ),
       
       // Cards
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: _lightCardColor,
         elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: Colors.black.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
@@ -444,9 +444,9 @@ class AppTheme {
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return _primaryColor.withOpacity(0.5);
+            return _primaryColor.withValues(alpha: 0.5);
           }
-          return Colors.grey.withOpacity(0.3);
+          return Colors.grey.withValues(alpha: 0.3);
         }),
       ),
       
@@ -473,7 +473,7 @@ class AppTheme {
       ),
       
       // Dialog
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: _lightSurfaceColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),

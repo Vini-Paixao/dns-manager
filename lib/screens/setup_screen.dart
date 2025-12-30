@@ -89,7 +89,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         Text(
           'Precisamos de uma permissão especial para gerenciar o DNS do seu dispositivo.',
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha:0.7),
           ),
         ),
       ],
@@ -102,10 +102,10 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.1),
+            color: AppColors.primary.withValues(alpha:0.1),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: AppColors.primary.withOpacity(0.3),
+              color: AppColors.primary.withValues(alpha:0.3),
             ),
           ),
           child: Row(
@@ -140,15 +140,15 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.secondary.withOpacity(0.15),
-            AppColors.secondary.withOpacity(0.05),
+            AppColors.secondary.withValues(alpha:0.15),
+            AppColors.secondary.withValues(alpha:0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.secondary.withOpacity(0.3),
+          color: AppColors.secondary.withValues(alpha:0.3),
         ),
       ),
       child: Column(
@@ -159,7 +159,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.secondary.withOpacity(0.2),
+                  color: AppColors.secondary.withValues(alpha:0.2),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -186,7 +186,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                       'Veja outras formas de conceder a permissão sem computador!',
                       style: TextStyle(
                         fontSize: 13,
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha:0.7),
                       ),
                     ),
                   ],
@@ -271,7 +271,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: isActive 
-                    ? AppColors.primary.withOpacity(0.15)
+                    ? AppColors.primary.withValues(alpha:0.15)
                     : Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
@@ -321,7 +321,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                             fontWeight: FontWeight.w600,
                             color: isActive 
                                 ? Theme.of(context).colorScheme.onSurface 
-                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                                : Theme.of(context).colorScheme.onSurface.withValues(alpha:0.6),
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -330,8 +330,8 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                           style: TextStyle(
                             fontSize: 13,
                             color: isActive 
-                                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.8)
-                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                                ? Theme.of(context).colorScheme.onSurface.withValues(alpha:0.8)
+                                : Theme.of(context).colorScheme.onSurface.withValues(alpha:0.5),
                           ),
                         ),
                       ],
@@ -343,7 +343,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                     step['icon'] as IconData,
                     color: isActive 
                         ? AppColors.primary 
-                        : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                        : Theme.of(context).colorScheme.onSurface.withValues(alpha:0.5),
                     size: 24,
                   ),
                 ],
@@ -372,7 +372,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
                 : const Color(0xFFF5F5F5),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+              color: Theme.of(context).colorScheme.outline.withValues(alpha:0.3),
             ),
           ),
           child: Column(
@@ -544,7 +544,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: AppColors.success.withOpacity(0.2),
+                color: AppColors.success.withValues(alpha:0.2),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -565,7 +565,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
             Text(
               'Agora você pode gerenciar o DNS privado do seu dispositivo.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha:0.7)),
             ),
           ],
         ),
@@ -650,7 +650,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
         Text(
           content,
           style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha:0.7),
             fontSize: 13,
           ),
         ),

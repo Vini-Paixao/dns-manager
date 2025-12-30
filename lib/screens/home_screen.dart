@@ -114,11 +114,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       
       // FAB para adicionar servidor
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showAddServerDialog,
-        backgroundColor: AppColors.primary,
-        icon: const Icon(Icons.add_rounded),
-        label: const Text('Novo DNS'),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: FloatingActionButton.extended(
+          onPressed: _showAddServerDialog,
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          highlightElevation: 0,
+          icon: const Icon(Icons.add_rounded),
+          label: const Text('Novo DNS'),
+        ),
       ),
     );
   }
@@ -179,7 +194,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               style: IconButton.styleFrom(
                 backgroundColor: _isReorderMode 
-                    ? AppColors.secondary.withOpacity(0.2)
+                    ? AppColors.secondary.withValues(alpha:0.2)
                     : cardColor,
               ),
             ),
@@ -240,7 +255,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.2),
+                        color: Colors.orange.withValues(alpha:0.2),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(

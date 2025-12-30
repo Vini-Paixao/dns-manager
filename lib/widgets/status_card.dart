@@ -44,14 +44,14 @@ class StatusCard extends StatelessWidget {
         boxShadow: isEnabled
             ? [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.3),
+                  color: AppColors.primary.withValues(alpha:0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
               ]
             : (isDarkMode ? null : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha:0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
@@ -92,7 +92,7 @@ class StatusCard extends StatelessWidget {
                 child: Switch(
                   value: isEnabled,
                   onChanged: isToggling ? null : onToggle,
-                  activeColor: Colors.white,
+                  activeThumbColor: Colors.white,
                   activeTrackColor: Colors.white24,
                   inactiveThumbColor: isDarkMode ? Colors.grey[400] : Colors.grey[500],
                   inactiveTrackColor: isDarkMode ? Colors.grey[700] : Colors.grey[300],
@@ -111,7 +111,7 @@ class StatusCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha:0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -169,7 +169,7 @@ class StatusCardLoading extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: isDarkMode ? null : [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha:0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -201,10 +201,10 @@ class StatusCardError extends StatelessWidget {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.error.withOpacity(0.5)),
+        border: Border.all(color: AppColors.error.withValues(alpha:0.5)),
         boxShadow: isDarkMode ? null : [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha:0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),

@@ -2,7 +2,7 @@ name: dns_manager
 description: "Gerenciador de DNS Privado (DNS over TLS) para Android"
 publish_to: 'none'
 
-version: 1.0.2+2
+version: 1.0.3+3
 
 environment:
   sdk: ^3.6.0
@@ -68,11 +68,13 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: false
-  # Coloque sua imagem 1024x1024 em assets/icon/app_icon.png
-  image_path: "assets/icon/app_icon.png"
+  # Ícone principal 512x512
+  image_path: "assets/icon/icon.png"
   # Configuração para Adaptive Icon (Android 8+)
   adaptive_icon_background: "#1A1A2E"  # Cor de fundo escura que combina com o app
-  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+  adaptive_icon_foreground: "assets/icon/icon_foreground.png"
+  # Ícone monocromático para Android 13+ (themed icons)
+  adaptive_icon_monochrome: "assets/icon/icon_monochrome.png"
   # Remove o canal alfa para compatibilidade
   remove_alpha_ios: true
 

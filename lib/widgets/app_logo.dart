@@ -71,8 +71,8 @@ class AppLogo extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
         child: Image.asset(
           foregroundOnly 
-              ? 'assets/icon/app_icon_foreground.png'
-              : 'assets/icon/app_icon.png',
+              ? 'assets/icon/icon_foreground.png'
+              : 'assets/icon/icon.png',
           width: size,
           height: size,
           fit: BoxFit.contain,
@@ -101,7 +101,7 @@ class AppLogo extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(size * 0.1),
           child: Image.asset(
-            'assets/icon/app_icon_foreground.png',
+            'assets/icon/icon_foreground.png',
             fit: BoxFit.contain,
           ),
         ),
@@ -122,7 +122,7 @@ class AppLogoImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Image.asset(
-      'assets/icon/app_icon.png',
+      'assets/icon/icon.png',
       width: size,
       height: size,
       fit: BoxFit.contain,

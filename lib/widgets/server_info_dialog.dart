@@ -143,7 +143,7 @@ class ServerInfoDialog extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: serverColor.withOpacity(0.15),
+                  color: serverColor.withValues(alpha:0.15),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -189,7 +189,7 @@ class ServerInfoDialog extends StatelessWidget {
         height: size,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: serverColor.withOpacity(0.15),
+          color: serverColor.withValues(alpha:0.15),
           borderRadius: BorderRadius.circular(12),
         ),
         child: SvgPicture.asset(
@@ -204,7 +204,7 @@ class ServerInfoDialog extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: serverColor.withOpacity(0.15),
+        color: serverColor.withValues(alpha:0.15),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Center(
@@ -247,7 +247,7 @@ class ServerInfoDialog extends StatelessWidget {
             margin: const EdgeInsets.only(top: 4),
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: serverColor.withOpacity(0.15),
+              color: serverColor.withValues(alpha:0.15),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(

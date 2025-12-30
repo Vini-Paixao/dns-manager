@@ -1,7 +1,7 @@
 # DNS Manager
 
 <p align="center">
-  <img src="assets/icon/app_icon.png" width="128" alt="DNS Manager Logo">
+  <img src="assets/icon/icon.png" width="128" alt="DNS Manager Logo">
 </p>
 
 <p align="center">

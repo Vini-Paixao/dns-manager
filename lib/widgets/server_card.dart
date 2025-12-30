@@ -84,9 +84,9 @@ class ServerCard extends StatelessWidget {
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
         color: isDragging 
-            ? serverColor.withOpacity(0.3)
+            ? serverColor.withValues(alpha:0.3)
             : isActive 
-                ? serverColor.withOpacity(isDarkMode ? 0.15 : 0.1) 
+                ? serverColor.withValues(alpha:isDarkMode ? 0.15 : 0.1) 
                 : bgColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
@@ -99,13 +99,13 @@ class ServerCard extends StatelessWidget {
         ),
         boxShadow: isDragging ? [
           BoxShadow(
-            color: serverColor.withOpacity(0.3),
+            color: serverColor.withValues(alpha:0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ] : (isDarkMode ? null : [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha:0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -195,8 +195,8 @@ class ServerCard extends StatelessWidget {
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
                       color: server.isHidden 
-                          ? Colors.orange.withOpacity(0.2)
-                          : Colors.grey.withOpacity(0.2),
+                          ? Colors.orange.withValues(alpha:0.2)
+                          : Colors.grey.withValues(alpha:0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -228,9 +228,9 @@ class ServerCard extends StatelessWidget {
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
         color: isDragging 
-            ? serverColor.withOpacity(0.3)
+            ? serverColor.withValues(alpha:0.3)
             : isActive 
-                ? serverColor.withOpacity(isDarkMode ? 0.15 : 0.1) 
+                ? serverColor.withValues(alpha:isDarkMode ? 0.15 : 0.1) 
                 : bgColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
@@ -243,7 +243,7 @@ class ServerCard extends StatelessWidget {
         ),
         boxShadow: isDarkMode ? null : [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha:0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -394,9 +394,9 @@ class ServerCard extends StatelessWidget {
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
         color: isDragging 
-            ? serverColor.withOpacity(0.3)
+            ? serverColor.withValues(alpha:0.3)
             : isActive 
-                ? serverColor.withOpacity(isDarkMode ? 0.15 : 0.1) 
+                ? serverColor.withValues(alpha:isDarkMode ? 0.15 : 0.1) 
                 : bgColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
@@ -409,13 +409,13 @@ class ServerCard extends StatelessWidget {
         ),
         boxShadow: isDragging ? [
           BoxShadow(
-            color: serverColor.withOpacity(0.3),
+            color: serverColor.withValues(alpha:0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ] : (isDarkMode ? null : [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha:0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -620,7 +620,7 @@ class ServerCard extends StatelessWidget {
         height: logoSize,
         padding: EdgeInsets.all(padding),
         decoration: BoxDecoration(
-          color: fallbackColor.withOpacity(0.15),
+          color: fallbackColor.withValues(alpha:0.15),
           borderRadius: BorderRadius.circular(borderRadius),
         ),
         child: SvgPicture.asset(
@@ -649,7 +649,7 @@ class ServerCard extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha:0.15),
         borderRadius: BorderRadius.circular(borderRadius),
       ),
       child: Center(
@@ -728,7 +728,7 @@ class ServerCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: latencyColor.withOpacity(0.15),
+        color: latencyColor.withValues(alpha:0.15),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
@@ -764,7 +764,7 @@ class AddServerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF2D2D2D).withOpacity(0.5),
+        color: const Color(0xFF2D2D2D).withValues(alpha:0.5),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Colors.grey[700]!,
@@ -784,7 +784,7 @@ class AddServerCard extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(

@@ -433,7 +433,7 @@ class _ServerFormDialogState extends State<ServerFormDialog> {
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: Color(color).withOpacity(0.5),
+                            color: Color(color).withValues(alpha:0.5),
                             blurRadius: 8,
                           ),
                         ]

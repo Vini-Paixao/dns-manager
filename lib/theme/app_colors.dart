@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 /// Use estas constantes em vez de valores hexadecimais hardcoded
 /// para manter consistência visual em todo o app.
 /// 
-/// Cores do gradiente do logo:
-/// - Ciano claro: #5de0e6
-/// - Azul escuro: #004aad
+/// Cores do gradiente do logo/ícone:
+/// - Roxo: #491c7c
+/// - Azul escuro: #0b2059
 class AppColors {
   // Prevenir instanciação
   AppColors._();
@@ -16,17 +16,35 @@ class AppColors {
   // CORES PRIMÁRIAS E DE DESTAQUE (baseadas no logo)
   // ============================================
   
-  /// Cor primária do app (Azul escuro do logo)
-  static const Color primary = Color(0xFF004aad);
+  /// Cor primária do app (Roxo do logo)
+  static const Color primary = Color(0xFF491c7c);
   
-  /// Cor secundária/destaque (Ciano claro do logo)
-  static const Color secondary = Color(0xFF5de0e6);
+  /// Cor secundária/destaque (Lilás vibrante - funciona em dark e light)
+  static const Color secondary = Color(0xFF9B6FCF);
   
-  /// Variante da cor primária (mais claro para tema claro)
-  static const Color primaryLight = Color(0xFF3366BB);
+  /// Variante da cor primária (mais claro)
+  static const Color primaryLight = Color(0xFF6B3FA0);
   
-  /// Variante do secundário (mais escuro para contraste)
-  static const Color secondaryDark = Color(0xFF00B4B4);
+  /// Variante da cor primária (mais escuro)
+  static const Color primaryDark = Color(0xFF2E1050);
+  
+  /// Variante do secundário (mais claro - para fundos)
+  static const Color secondaryLight = Color(0xFFB794E0);
+  
+  /// Variante do secundário (mais escuro - para textos em fundo claro)
+  static const Color secondaryDark = Color(0xFF7B4FB0);
+  
+  /// Cor de destaque/accent (tom vibrante)
+  static const Color accent = Color(0xFF8E5CD9);
+  
+  /// Cor de destaque clara (lilás claro)
+  static const Color accentLight = Color(0xFFAD85E8);
+  
+  /// Azul do logo (para gradientes e fundos especiais)
+  static const Color logoBlue = Color(0xFF0b2059);
+  
+  /// Azul claro (para uso em UI)
+  static const Color blueLight = Color(0xFF4A7CC9);
   
   /// Cor de erro
   static const Color error = Color(0xFFCF6679);
@@ -41,14 +59,14 @@ class AppColors {
   // CORES DO TEMA ESCURO
   // ============================================
   
-  /// Fundo principal (tema escuro)
-  static const Color darkBackground = Color(0xFF121212);
+  /// Fundo principal (tema escuro) - com toque de azul
+  static const Color darkBackground = Color(0xFF0D1117);
   
   /// Superfície/container (tema escuro)
-  static const Color darkSurface = Color(0xFF1E1E1E);
+  static const Color darkSurface = Color(0xFF161B22);
   
   /// Cards e elementos elevados (tema escuro)
-  static const Color darkCard = Color(0xFF2D2D2D);
+  static const Color darkCard = Color(0xFF21262D);
   
   /// Texto primário (tema escuro)
   static const Color darkTextPrimary = Color(0xFFFFFFFF);
@@ -57,14 +75,14 @@ class AppColors {
   static const Color darkTextSecondary = Color(0xFFB3B3B3);
   
   /// Divisores (tema escuro)
-  static const Color darkDivider = Color(0xFF3D3D3D);
+  static const Color darkDivider = Color(0xFF30363D);
 
   // ============================================
   // CORES DO TEMA CLARO
   // ============================================
   
   /// Fundo principal (tema claro)
-  static const Color lightBackground = Color(0xFFF5F5F5);
+  static const Color lightBackground = Color(0xFFF6F8FA);
   
   /// Superfície/container (tema claro)
   static const Color lightSurface = Color(0xFFFFFFFF);
@@ -85,8 +103,8 @@ class AppColors {
   // CORES DE STATUS DO DNS
   // ============================================
   
-  /// DNS ativo (ciano do logo)
-  static const Color dnsActive = Color(0xFF5de0e6);
+  /// DNS ativo (roxo claro vibrante)
+  static const Color dnsActive = Color(0xFF9B6FCF);
   
   /// DNS inativo (cinza)
   static const Color dnsInactive = Color(0xFF9E9E9E);
@@ -107,31 +125,53 @@ class AppColors {
   /// AdGuard
   static const Color providerAdguard = Color(0xFF68BC71);
   
-  /// Servidor customizado (cor padrão - azul do logo)
-  static const Color providerCustom = Color(0xFF004aad);
+  /// Servidor customizado (cor padrão - roxo do logo)
+  static const Color providerCustom = Color(0xFF491c7c);
 
   // ============================================
   // GRADIENTES
   // ============================================
   
-  /// Gradiente primário do app (circular do logo)
+  /// Gradiente primário do app (cores do ícone - horizontal)
   static const LinearGradient primaryGradient = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
     colors: [
-      Color(0xFF5de0e6), // Ciano claro
-      Color(0xFF004aad), // Azul escuro
+      Color(0xFF491c7c), // Roxo
+      Color(0xFF0b2059), // Azul escuro
     ],
   );
   
-  /// Gradiente do ícone do app (igual ao logo)
+  /// Gradiente do ícone do app (vertical)
   static const LinearGradient iconGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xFF5de0e6), // Ciano claro
-      Color(0xFF004aad), // Azul escuro
+      Color(0xFF491c7c), // Roxo
+      Color(0xFF0b2059), // Azul escuro
     ],
+  );
+  
+  /// Gradiente diagonal (para cards especiais)
+  static const LinearGradient diagonalGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0xFF491c7c), // Roxo
+      Color(0xFF0b2059), // Azul escuro
+    ],
+  );
+  
+  /// Gradiente suave (com mais stops para transição mais suave)
+  static const LinearGradient softGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0xFF6B3FA0), // Roxo claro
+      Color(0xFF491c7c), // Roxo
+      Color(0xFF0b2059), // Azul escuro
+    ],
+    stops: [0.0, 0.5, 1.0],
   );
   
   /// Gradiente radial para fundos especiais
@@ -139,8 +179,8 @@ class AppColors {
     center: Alignment.center,
     radius: 0.8,
     colors: [
-      Color(0xFF5de0e6), // Ciano claro
-      Color(0xFF004aad), // Azul escuro
+      Color(0xFF491c7c), // Roxo
+      Color(0xFF0b2059), // Azul escuro
     ],
   );
 
@@ -188,6 +228,6 @@ class AppColors {
   
   /// Retorna cor com opacidade para fundos
   static Color withSurfaceOpacity(Color color, {double opacity = 0.1}) {
-    return color.withOpacity(opacity);
+    return color.withValues(alpha: opacity);
   }
 }

@@ -280,7 +280,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> with SingleTicker
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
+                  color: Colors.red.withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -617,9 +617,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> with SingleTicker
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
+              final scaffoldMessenger = ScaffoldMessenger.of(this.context);
               final count = await ref.read(historyProvider.notifier).cleanupOldRecords();
               if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
+                scaffoldMessenger.showSnackBar(
                   SnackBar(content: Text('$count registros removidos')),
                 );
               }
@@ -647,9 +648,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> with SingleTicker
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
+              final scaffoldMessenger = ScaffoldMessenger.of(this.context);
               await ref.read(historyProvider.notifier).clearHistory();
               if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
+                scaffoldMessenger.showSnackBar(
                   const SnackBar(content: Text('Histórico limpo')),
                 );
               }

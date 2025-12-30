@@ -148,10 +148,10 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha:0.3),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha:0.3),
         ),
       ),
       child: Column(
@@ -178,7 +178,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
             'A permissão WRITE_SECURE_SETTINGS é necessária para alterar as configurações de DNS do sistema. '
             'Por segurança, o Android não permite que apps concedam essa permissão sozinhos.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha:0.8),
             ),
           ),
         ],
@@ -200,7 +200,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: isRecommended 
-            ? BorderSide(color: iconColor.withOpacity(0.5), width: 2)
+            ? BorderSide(color: iconColor.withValues(alpha:0.5), width: 2)
             : BorderSide.none,
       ),
       child: InkWell(
@@ -215,7 +215,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.15),
+                  color: iconColor.withValues(alpha:0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, color: iconColor, size: 28),
@@ -268,7 +268,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
                     Text(
                       description,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha:0.6),
                       ),
                     ),
                   ],
@@ -278,7 +278,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
               // Seta
               Icon(
                 Icons.chevron_right_rounded,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha:0.3),
               ),
             ],
           ),
@@ -334,7 +334,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                      color: Theme.of(context).colorScheme.outline.withValues(alpha:0.3),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -347,7 +347,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.15),
+                        color: Colors.blue.withValues(alpha:0.15),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(Icons.usb_rounded, color: Colors.blue, size: 28),
@@ -472,7 +472,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                      color: Theme.of(context).colorScheme.outline.withValues(alpha:0.3),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -485,7 +485,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.purple.withOpacity(0.15),
+                        color: Colors.purple.withValues(alpha:0.15),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(Icons.apps_rounded, color: Colors.purple, size: 28),
@@ -516,9 +516,9 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(0.1),
+                    color: Colors.orange.withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                    border: Border.all(color: Colors.orange.withValues(alpha:0.3)),
                   ),
                   child: Row(
                     children: [
@@ -633,7 +633,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                      color: Theme.of(context).colorScheme.outline.withValues(alpha:0.3),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -646,7 +646,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.teal.withOpacity(0.15),
+                        color: Colors.teal.withValues(alpha:0.15),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(Icons.wifi_tethering_rounded, color: Colors.teal, size: 28),
@@ -677,9 +677,9 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.teal.withOpacity(0.1),
+                    color: Colors.teal.withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.teal.withOpacity(0.3)),
+                    border: Border.all(color: Colors.teal.withValues(alpha:0.3)),
                   ),
                   child: Row(
                     children: [
@@ -809,7 +809,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
               Container(
                 width: 2,
                 height: 80 + (child != null ? 60.0 : 0.0),
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha:0.3),
               ),
           ],
         ),
@@ -838,7 +838,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
                 Text(
                   description,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha:0.7),
                   ),
                 ),
                 if (child != null) ...[
@@ -875,7 +875,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
           ),
           IconButton(
             icon: const Icon(Icons.copy, size: 18),
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha:0.6),
             onPressed: () {
               Clipboard.setData(ClipboardData(text: command));
               ScaffoldMessenger.of(context).showSnackBar(
@@ -930,9 +930,9 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
       padding: const EdgeInsets.all(12),
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.amber.withOpacity(0.1),
+        color: Colors.amber.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.amber.withOpacity(0.4)),
+        border: Border.all(color: Colors.amber.withValues(alpha:0.4)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -970,19 +970,19 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.red.withOpacity(0.1),
-            Colors.red.withOpacity(0.05),
+            Colors.red.withValues(alpha:0.1),
+            Colors.red.withValues(alpha:0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.red.withOpacity(0.3)),
+        border: Border.all(color: Colors.red.withValues(alpha:0.3)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.red.withOpacity(0.15),
+              color: Colors.red.withValues(alpha:0.15),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.play_circle_fill, color: Colors.red, size: 32),
@@ -1004,7 +1004,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
                   description,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha:0.6),
                   ),
                 ),
               ],
@@ -1117,7 +1117,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
+                color: Colors.green.withValues(alpha:0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -1139,7 +1139,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
               'Agora você pode usar todas as funcionalidades do DNS Manager.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha:0.7),
               ),
             ),
           ],
@@ -1221,7 +1221,7 @@ class _PermissionOptionsScreenState extends ConsumerState<PermissionOptionsScree
           Text(
             content,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha:0.7),
               fontSize: 13,
             ),
           ),
